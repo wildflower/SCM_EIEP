@@ -115,6 +115,7 @@ class EIEP1_HDR
     var $fileStatus;
     var $isValidFilename;
     var $lineCountIsValid;
+    var $database_action;
    
     
     function validate()
@@ -220,7 +221,8 @@ class EIEP1_HDR
             "reportMonth" => $this->reportMonth,
             "utilityType" => $this->utilityType,
             "fileStatus" => $this->fileStatus,
-            "fk_files" => $this->fk_files
+            "fk_files" => $this->fk_files,
+	    "database_action" => $this->database_action
         );
     }
     
@@ -255,6 +257,19 @@ class EIEP1_HDR
 		$this->reportMonth           = $lineDetails[11];
 		$this->utilityType           = $lineDetails[12];
 		$this->fileStatus            = $lineDetails[13];
+	}
+	
+	switch ($this->fileStatus ){
+		case "I":
+			$this->database_action = "C";
+		break;
+		case "X":
+			$this->database_action = "D";
+		break;
+		case "R":
+			$this->database_action = "U";
+		break;	
+	
 	}
     
     }

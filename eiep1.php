@@ -33,7 +33,7 @@ echo "before for each \n";
 if(isset($_GET['path'])){
 	$path = $_GET['path'];
 }else{
-	$path = './electra/*/*';
+	$path = '../electra/*/*';
 }
 
 foreach (glob($path) as $filename) {

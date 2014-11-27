@@ -137,7 +137,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	case 'DET':{
 		if (strpos(get_class($HDR),'1')){
 			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
-			$query = "UPDATE $project_table set database_action = 'D' WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'"
+			$query = "UPDATE $project_table set database_action = 'D' WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'";
 			$dbh->exec($query);
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}else{
@@ -189,7 +189,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 function get_statement($HDR,$dbh){
 	$project_table = project_table($HDR);
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer,fileStatus, fk_electra_files)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender,:fileStatus,:fk_electra_files)");
+		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer,fileStatus, fk_electra_files,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender,:fileStatus,:fk_electra_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
@@ -219,6 +219,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':sender',$HDR->sender);
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
 	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);	
+	$stmt->bindValue(':database_action',$HDR->database_action);	
 	break;
 	case  "EIEP3_HDR":	
 	$stmt->bindValue(':fileid',$HDR->fileid);
@@ -343,6 +344,8 @@ $stmt->execute();
 //print_r( $stmt->errorCode());
 //echo "\n";
 //var_dump($dbh->errorInfo());
+return $dbh->lastInsertId();
+
 }
 /*
 
