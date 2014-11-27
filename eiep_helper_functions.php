@@ -137,7 +137,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	case 'DET':{
 		if (strpos(get_class($HDR),'1')){
 			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
-			$query = "DELETE FROM $project_table WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'";
+			$query = "UPDATE $project_table set database_action = 'D' WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'"
 			$dbh->exec($query);
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}else{
@@ -166,7 +166,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	case 'HDR':{
 		$HDR = get_valid_HDR($lineDetails);
 		$project_table = project_table($HDR);
-			$dbh->exec("DELETE FROM $project_table WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
+			$dbh->exec("UPDATE $project_table  set database_action = 'D' WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
 			$stmt = get_statement($HDR,$dbh);
 			break;
 		}
