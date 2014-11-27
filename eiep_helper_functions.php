@@ -136,8 +136,8 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 		}
 	case 'DET':{
 		if (strpos(get_class($HDR),'1')){
-			$DET = new EIEP1_DET($lineDetails);
-			$query = "UPDATE $project_table set database_action = 'D' WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'";
+			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
+			$query = "DELETE FROM $project_table WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'";
 			$dbh->exec($query);
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}else{
@@ -166,13 +166,13 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	case 'HDR':{
 		$HDR = get_valid_HDR($lineDetails);
 		$project_table = project_table($HDR);
-			$dbh->exec("UPDATE $project_table  set database_action = 'D' WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
+			$dbh->exec("DELETE FROM $project_table WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
 			$stmt = get_statement($HDR,$dbh);
 			break;
 		}
 	case 'DET':{
 		if (strpos(get_class($HDR),'1')){
-			$DET = new EIEP1_DET($lineDetails);
+			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}else{
 			$DET = new EIEP3_DET($lineDetails);
@@ -189,7 +189,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 function get_statement($HDR,$dbh){
 	$project_table = project_table($HDR);
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer, fileStatus, fk_electra_files)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender, :fileStatus, :fk_electra_files)");
+		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer,fileStatus, fk_electra_files)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender,:fileStatus,:fk_electra_files)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
@@ -200,9 +200,6 @@ function get_statement($HDR,$dbh){
 }
 
 function execute_stmt($HDR,$DET,$stmt){
-
-	//echo  "foreign key for the HDR file :".$HDR->fk_files ."\n";
-	//echo "get_class is :".get_class($HDR)."\n";
 	switch (get_class($HDR))
 	{
 	case  "EIEP1_HDR":
@@ -221,7 +218,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':reportMonth',$DET->reportMonth);
 	$stmt->bindValue(':sender',$HDR->sender);
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
-	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);		
+	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);	
 	break;
 	case  "EIEP3_HDR":	
 	$stmt->bindValue(':fileid',$HDR->fileid);
@@ -234,7 +231,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':reactiveEnergy',$DET->reactiveEnergy);
 	$stmt->bindValue(':apparentEnergy',$DET->apparentEnergy);
 	$stmt->bindValue(':reportMonth',$HDR->reportMonth);	
-	$stmt->bindValue(':fileStatus',$HDR->fileStatus);		
+	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
 	break;
 	case  "LIST_HDR":
 	$stmt->bindValue(':ICP',$DET->ICP);	
@@ -260,6 +257,7 @@ function execute_UB_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':sender',$HDR->sender);	
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
 	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);	
+
 	$stmt->execute();
 }
 
@@ -301,7 +299,7 @@ global $filename;
 				var_dump($messages);
 				fwrite($processing_status ,"Field $key has failed ".count($value)." tests  \n");
 			}				
-			fwrite($errors,"# $filename \n");
+			//fwrite($errors,"# $filename \n");
 			fwrite($processing_status ,"# $filename \n");
 			$DET->write($errors);
 			$DET->write($processing_status );					
@@ -345,7 +343,6 @@ $stmt->execute();
 //print_r( $stmt->errorCode());
 //echo "\n";
 //var_dump($dbh->errorInfo());
-return $dbh->lastInsertId();
 }
 /*
 

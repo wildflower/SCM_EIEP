@@ -12,7 +12,7 @@ $dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
 //$dbh = new PDO('mysql:host=wildflower.geek.nz;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
-$errors = fopen('electra-october-errors.txt','a');
+$errors = fopen('electra-errors.txt','a');
 $processing_status = fopen('electra-october-status.txt','a');
 
 
@@ -33,7 +33,7 @@ echo "before for each \n";
 if(isset($_GET['path'])){
 	$path = $_GET['path'];
 }else{
-	$path = './october/*';
+	$path = './electra/*/*';
 }
 
 foreach (glob($path) as $filename) {
@@ -84,7 +84,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
     	//should check startdate and enddate are near reportmonth?
 	  
 		if (strpos(get_class($HDR),'1')){
-			$DET = new EIEP1_DET($lineDetails);			
+			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);			
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}elseif(strpos(get_class($HDR),'3')){
 			$DET = new EIEP3_DET($lineDetails);

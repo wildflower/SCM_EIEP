@@ -115,7 +115,6 @@ class EIEP1_HDR
     var $fileStatus;
     var $isValidFilename;
     var $lineCountIsValid;
-    var $fk_files;
    
     
     function validate()
@@ -221,26 +220,45 @@ class EIEP1_HDR
             "reportMonth" => $this->reportMonth,
             "utilityType" => $this->utilityType,
             "fileStatus" => $this->fileStatus,
-	    "fk_files" => $this->fk_files
+            "fk_files" => $this->fk_files
         );
     }
-    function EIEP1_HDR($lineDetails)
-    {
-        $this->filetype              = $lineDetails[1];
-	$this->eiepversion              = $lineDetails[2];
-        $this->sender                = $lineDetails[3];
-        $this->onbehalfsender        = $lineDetails[4];
-        $this->recipient             = $lineDetails[5];
-        $this->reportRunDate         = $lineDetails[6];
-        $this->reportRunTime         = $lineDetails[7];
-        $this->fileid                = $lineDetails[8];
-        $this->numberOfDetailRecords = $lineDetails[9];
-        $this->reportPeriodStartDate = $lineDetails[10];
-        $this->reportPeriodEndDate   = $lineDetails[11];
-        $this->reportMonth           = $lineDetails[12];
-        $this->utilityType           = $lineDetails[13];
-        $this->fileStatus            = $lineDetails[14];
+    
+    
+    function EIEP1_HDR($lineDetails){
+	if ($lineDetails[2] =='10'){    
+		$this->filetype              = $lineDetails[1];
+		$this->eiepversion              = $lineDetails[2];
+		$this->sender                = $lineDetails[3];
+		$this->onbehalfsender        = $lineDetails[4];
+		$this->recipient             = $lineDetails[5];
+		$this->reportRunDate         = $lineDetails[6];
+		$this->reportRunTime         = $lineDetails[7];
+		$this->fileid                = $lineDetails[8];
+		$this->numberOfDetailRecords = $lineDetails[9];
+		$this->reportPeriodStartDate = $lineDetails[10];
+		$this->reportPeriodEndDate   = $lineDetails[11];
+		$this->reportMonth           = $lineDetails[12];
+		$this->utilityType           = $lineDetails[13];
+		$this->fileStatus            = $lineDetails[14];        
+	}else{
+		$this->filetype              = $lineDetails[1];	
+		$this->sender                = $lineDetails[2];
+		$this->onbehalfsender        = $lineDetails[3];
+		$this->recipient             = $lineDetails[4];
+		$this->reportRunDate         = $lineDetails[5];
+		$this->reportRunTime         = $lineDetails[6];
+		$this->fileid                = $lineDetails[7];
+		$this->numberOfDetailRecords = $lineDetails[8];
+		$this->reportPeriodStartDate = $lineDetails[9];
+		$this->reportPeriodEndDate   = $lineDetails[10];
+		$this->reportMonth           = $lineDetails[11];
+		$this->utilityType           = $lineDetails[12];
+		$this->fileStatus            = $lineDetails[13];
+	}
+    
     }
+    
 }
 
 class VALIDATE_EIEP1_DET
@@ -394,33 +412,60 @@ class EIEP1_DET
     
 
     
-    function __construct($lineDetails)
+    function __construct($lineDetails,$version)
     {
-        $this->ICP                   = $lineDetails[1];
-        $this->reportPeriodStartDate = $lineDetails[2];
-        $this->reportPeriodEndDate   = $lineDetails[3];
-        $this->tariffDesc            = $lineDetails[4];
-        $this->unitType              = $lineDetails[5];
-        $this->units                 = $lineDetails[6];
-        $this->status                = $lineDetails[7];
-        $this->busName               = $lineDetails[8];
-        $this->distId                = $lineDetails[9];
-        $this->spare                 = $lineDetails[10];
-        $this->tariffCode            = $lineDetails[11];
-        $this->tariffRate            = $lineDetails[12];
-        $this->fixedVariable         = $lineDetails[13];
-        $this->chargeableDays        = $lineDetails[14];
-        $this->networkCharge         = $lineDetails[15];
+	if($version){
+		$this->ICP                   = $lineDetails[1];
+		$this->reportPeriodStartDate = $lineDetails[2];
+		$this->reportPeriodEndDate   = $lineDetails[3];
+		$this->tariffDesc            = $lineDetails[4];
+		$this->unitType              = $lineDetails[5];
+		$this->units                 = $lineDetails[6];
+		$this->status                = $lineDetails[7];
+		$this->busName               = $lineDetails[8];
+		$this->distId                = $lineDetails[9];
+		$this->spare                 = $lineDetails[10];
+		$this->tariffCode            = $lineDetails[11];
+		$this->tariffRate            = $lineDetails[12];
+		$this->fixedVariable         = $lineDetails[13];
+		$this->chargeableDays        = $lineDetails[14];
+		$this->networkCharge         = $lineDetails[15];
 	
-	$this->registerContentCode = $lineDetails[16];
-	$this->periodOfAvailability = $lineDetails[17];
+		$this->registerContentCode = $lineDetails[16];
+		$this->periodOfAvailability = $lineDetails[17];
     
-        $this->reportMonth           = $lineDetails[18];
-        $this->customerNo            = $lineDetails[19];
-        $this->consumerNo            = $lineDetails[20];
-        $this->invoiceDate           = $lineDetails[21];
-        $this->invoiceNumber         = $lineDetails[22];
-        
+		$this->reportMonth           = $lineDetails[18];
+		$this->customerNo            = $lineDetails[19];
+		$this->consumerNo            = $lineDetails[20];
+		$this->invoiceDate           = $lineDetails[21];
+		$this->invoiceNumber         = $lineDetails[22];
+        }else{
+		$this->ICP                   = $lineDetails[1];
+		$this->reportPeriodStartDate = $lineDetails[2];
+		$this->reportPeriodEndDate   = $lineDetails[3];
+		$this->tariffDesc            = $lineDetails[4];
+		$this->unitType              = $lineDetails[5];
+		$this->units                 = $lineDetails[6];
+		$this->status                = $lineDetails[7];
+		$this->busName               = $lineDetails[8];
+		$this->distId                = $lineDetails[9];
+		$this->spare                 = $lineDetails[10];
+		$this->tariffCode            = $lineDetails[11];
+		$this->tariffRate            = $lineDetails[12];
+		$this->fixedVariable         = $lineDetails[13];
+		$this->chargeableDays        = $lineDetails[14];
+		$this->networkCharge         = $lineDetails[15];	
+    
+		$this->reportMonth           = $lineDetails[16];
+		$this->customerNo            = $lineDetails[17];
+		$this->consumerNo            = $lineDetails[18];
+		$this->invoiceDate           = $lineDetails[19];
+		$this->invoiceNumber         = $lineDetails[20];
+		
+		$this->registerContentCode = 0;
+		$this->periodOfAvailability = 0;
+	
+	}
 	
     }
     function write($filehandler)
@@ -483,7 +528,7 @@ class EIEP3_HDR
     var $reportMonth;
     var $utilityType;
     var $fileStatus;
-    var $fk_files;
+    
     
     
     function EIEP3_HDR($lineDetails)
@@ -515,8 +560,7 @@ class EIEP3_HDR
             "numberOfDetailRecords" => $this->numberOfDetailRecords,
             "reportMonth" => $this->reportMonth,
             "utilityType" => $this->utilityType,
-            "fileStatus" => $this->fileStatus,
-	    "fk_files" => $this->fk_files
+            "fileStatus" => $this->fileStatus
         );
     }
     
