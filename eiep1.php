@@ -127,10 +127,14 @@ $time = $end_time - $start_time;
 echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
 =======
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds\n");
 >>>>>>> 0ed35f1c8b4791657a37c931f3ea755738d9c9da
+=======
+fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
+>>>>>>> 9f711302dde139871a92ea6187dd662da8be9a1a
 fclose($errors);
 fclose($processing_status);
 
