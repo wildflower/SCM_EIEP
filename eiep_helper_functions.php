@@ -19,7 +19,9 @@ function detectDelimiter($handle) {
 
 
 function project_table($HDR){
+// return eiep1 or eiep3
 $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
+
 	if ( $HDR->sender == "HAWK" && ($HDR->recipient == "MERI" ||  $HDR->recipient == "PUNZ"))
 	{
 		$table = 'unison_invoice';
