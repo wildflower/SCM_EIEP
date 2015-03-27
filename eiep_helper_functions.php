@@ -28,6 +28,7 @@ $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 	}
 	else{
 	$table = get_project($HDR->recipient).$class."_staging";
+	//$table = get_project($HDR->recipient).$class;
 	
 	}
 return $table;
