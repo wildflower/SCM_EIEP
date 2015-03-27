@@ -20,6 +20,7 @@ function detectDelimiter($handle) {
 
 function project_table($HDR){
 // return eiep1 or eiep3
+echo "Project table \n";
 $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 
 	if ( $HDR->sender == "HAWK" && ($HDR->recipient == "MERI" ||  $HDR->recipient == "PUNZ"))
@@ -317,6 +318,7 @@ function store_header_details($HDR,$filename){
 global $dbh;
 $FILE = new EIEP_Filename(strtoupper(basename($filename)));
 validateFilename($HDR,$FILE);
+echo "Store headers \n";
 $project_table = get_project($HDR->recipient)."files";
 
 echo "Line count value ".$HDR->lineCountIsValid." \n";
