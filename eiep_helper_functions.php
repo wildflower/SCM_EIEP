@@ -190,6 +190,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 }
 
 function get_statement($HDR,$dbh){
+echo "Get (prepare SQL) Statement \n";
 	$project_table = project_table($HDR);
 	if (strpos(get_class($HDR),'1')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer,fileStatus, fk_electra_files,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender,:fileStatus,:fk_electra_files,:database_action)");
