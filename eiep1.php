@@ -127,6 +127,7 @@ $time = $end_time - $start_time;
 echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time);
 
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
+
 fclose($errors);
 fclose($processing_status);
 
