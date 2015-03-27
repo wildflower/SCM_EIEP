@@ -3,6 +3,7 @@ parse_str(implode('&', array_slice($argv, 1)), $_GET);
 
 include 'eiep_files.php';
 include 'eiep_helper_functions.php';
+include 'settings.php';
 
 $start_time = time();
 $dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
@@ -125,7 +126,11 @@ $end_time = time();
 $time = $end_time - $start_time;
 echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time);
 
+<<<<<<< HEAD
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
+=======
+fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds\n");
+>>>>>>> 0ed35f1c8b4791657a37c931f3ea755738d9c9da
 fclose($errors);
 fclose($processing_status);
 
