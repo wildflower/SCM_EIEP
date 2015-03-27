@@ -4,12 +4,8 @@ parse_str(implode('&', array_slice($argv, 1)), $_GET);
 include 'eiep_files.php';
 include 'eiep_helper_functions.php';
 
-$user = 'haydn';
-$password = 'huxlyharla';
-
 $start_time = time();
 $dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
-//$dbh = new PDO('mysql:host=wildflower.geek.nz;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 $errors = fopen('electra-errors.txt','a');
