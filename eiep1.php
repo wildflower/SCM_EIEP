@@ -3,6 +3,7 @@ parse_str(implode('&', array_slice($argv, 1)), $_GET);
 
 include 'eiep_files.php';
 include 'eiep_helper_functions.php';
+include 'settings.php';
 
 $start_time = time();
 $dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
