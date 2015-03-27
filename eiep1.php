@@ -124,7 +124,7 @@ foreach ($rfiles as $file){
 
 $end_time = time();
 $time = $end_time - $start_time;
-echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time);
+echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time), " \n";
 
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
 
