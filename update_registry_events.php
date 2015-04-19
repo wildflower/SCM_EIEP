@@ -1,4 +1,5 @@
 <?php
+include 'settings.php';
 $start_time = time();
 $wsdl = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?WebService&listName=WSP_Registry&serviceName=WSRegistry&wsdl=wsdl";
 $wsdl = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?WebService&serviceName=WSRegistry&listName=WSP_Registry2&wsdl=wsdl";
@@ -7,14 +8,14 @@ $client = new SoapClient($wsdl,array('trace'=>1));
 $project_table = 'electra_registry';
 $errors = fopen('registry_updates.txt','a');
 
-$link = mysql_connect('localhost', 'haydn', 'huxlyharla');
+$link = mysql_connect('localhost', $user, $password);
 if (!$link) {
     die('Could not connect: ' . mysql_error());
 }
 mysql_select_db('scm',$link);
 
 //$query = "select icp from $project_table ";
-$query = "select distinct icp from icpincident;";
+$query = "select distinct icp from icpincident limit 1;";
 $icp_list = mysql_query($query);
 
 if (!$icp_list) {
@@ -58,7 +59,7 @@ $update_record = new scmEvent();
 $target_icp = new icpEvents();
 
 $target_icp->userName = "ELEC0003";
-$target_icp->password = "findloss07";
+$target_icp->password = $MARIA_password;
 $target_icp->includeReversed = "1";
 $target_icp->includeSwitch = "1";
 $target_icp->includeRecon = "1";
@@ -85,9 +86,10 @@ $count = mysql_result($eventcount,0);
 if( is_null($target_result->icpEvents_v1Result->allEvents))
 {
 echo $target_result->message."\n";
-if(($target_result->message == "User code is invalid") || ($target_result->message == "This user code has been locked")){
 exit;
-}
+if(($target_result->message == "User code is invalid") || ($target_result->message == "This user code has been locked")|| $target_result->message == "Password is invalid, please retry"){
+	exit;
+	}
 continue;
 }
 if($count != count($target_result->icpEvents_v1Result->allEvents->WS_ICPEvent)){

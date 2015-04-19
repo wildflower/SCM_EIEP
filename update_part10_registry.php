@@ -1,4 +1,5 @@
 <?php
+include 'settings.php';
 error_reporting(E_ALL); 
 ini_set('display_errors', true);
 
@@ -17,21 +18,18 @@ $project_table = $project.'_registry';
 $errors = fopen('registry_updates.txt','a');
 
 $count = 0;
-//$link = mysql_connect('wildflower.geek.nz', 'haydn', 'huxlyharla'); 
 
 $dsn = 'mysql:host=localhost;dbname=scm';
-$username = 'haydn';
-$password = 'huxlyharla';
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
 ); 
 
-$dbh = new PDO($dsn, $username, $password, $options);
+$dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-//$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
+$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
 //$query = 'select "0000339010EL523"  from dual';
-$query = "select distinct icp from icpincident" ;
+//$query = "select distinct icp from icpincident" ;
 //$query = "select '0013546598ELC86' as icp  from dual";
 $sth = $dbh->prepare($query);
 $sth->execute();
@@ -40,7 +38,7 @@ $sth->execute();
 
 $target_icp = new icpDetails();
 $target_icp->userName = "ELEC0003";
-$target_icp->password = "findloss07";
+$target_icp->password = $MARIA_password;
 $target_icp->eventDate = "";
 
 $update_record = new icpRegistry();
@@ -60,6 +58,7 @@ $target_result = $client->icpDetails_v1($target_icp);
 if( is_null($target_result->icpDetails_v1Result->myIcp->icpId))
 {
 echo $target_result->message."\n";
+exit;
 	if(($target_result->message == "User code is invalid") || ($target_result->message == "This user code has been locked")){
 	exit;
 	}
