@@ -86,6 +86,8 @@ $count = mysql_result($eventcount,0);
 if( is_null($target_result->icpEvents_v1Result->allEvents))
 {
 echo $target_result->message."\n";
+echo "in here with no message?\n";
+var_dump($target_result);
 exit;
 if(($target_result->message == "User code is invalid") || ($target_result->message == "This user code has been locked")|| $target_result->message == "Password is invalid, please retry"){
 	exit;

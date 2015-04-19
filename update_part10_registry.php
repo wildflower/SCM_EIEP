@@ -27,9 +27,9 @@ $options = array(
 $dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
+//$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
 //$query = 'select "0000339010EL523"  from dual';
-//$query = "select distinct icp from icpincident" ;
+$query = "select distinct icp from icpincident" ;
 //$query = "select '0013546598ELC86' as icp  from dual";
 $sth = $dbh->prepare($query);
 $sth->execute();
