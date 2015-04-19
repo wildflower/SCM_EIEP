@@ -10,7 +10,7 @@ $dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 $errors = fopen('electra-errors.txt','a');
-$processing_status = fopen('electra-status.txt','a');
+$processing_status = fopen('electra-october-status.txt','a');
 
 
 $eiep1 = new VALIDATE_EIEP1_DET();       	
@@ -30,7 +30,7 @@ echo "before for each \n";
 if(isset($_GET['path'])){
 	$path = $_GET['path'];
 }else{
-	$path = './electra/';
+	$path = '../electra/*/*';
 }
 
 foreach (glob($path) as $filename) {
