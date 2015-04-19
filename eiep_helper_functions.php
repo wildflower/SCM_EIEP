@@ -30,8 +30,8 @@ $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 		$table = get_project($HDR->recipient)."registry";
 	}
 	else{
-	$table = get_project($HDR->recipient).$class."_staging";
-	//$table = get_project($HDR->recipient).$class;
+	//$table = get_project($HDR->recipient).$class."_staging";
+	$table = get_project($HDR->recipient).$class;
 	
 	}
 return $table;
