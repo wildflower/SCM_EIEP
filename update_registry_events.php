@@ -15,7 +15,8 @@ if (!$link) {
 mysql_select_db('scm',$link);
 
 //$query = "select icp from $project_table ";
-$query = "select distinct icp from icpincident limit 1;";
+$query = "select distinct icp from icpincident ;";
+
 $icp_list = mysql_query($query);
 
 if (!$icp_list) {
@@ -85,11 +86,9 @@ $eventcount = mysql_query($sql);
 $count = mysql_result($eventcount,0);
 if( is_null($target_result->icpEvents_v1Result->allEvents))
 {
-echo $target_result->message."\n";
-echo "in here with no message?\n";
-var_dump($target_result);
-exit;
-if(($target_result->message == "User code is invalid") || ($target_result->message == "This user code has been locked")|| $target_result->message == "Password is invalid, please retry"){
+//var_dump($target_result);
+echo 'Error Code:', $target_result->icpEvents_v1Result->allErrors->WS_Error->code, ' ',$target_result->icpEvents_v1Result->allErrors->WS_Error->item,' ', $target_result->icpEvents_v1Result->allErrors->WS_Error->text, "\n";
+	if($target_result->icpDetails_v1Result->allErrors->WS_Error->code > 1000){
 	exit;
 	}
 continue;
