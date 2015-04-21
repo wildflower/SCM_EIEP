@@ -1,4 +1,5 @@
 <?php
+parse_str(implode('&', array_slice($argv, 1)), $_GET);
 include 'settings.php';
 $start_time = time();
 $wsdl = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?WebService&listName=WSP_Registry&serviceName=WSRegistry&wsdl=wsdl";
@@ -14,8 +15,17 @@ if (!$link) {
 }
 mysql_select_db('scm',$link);
 
-//$query = "select icp from $project_table ";
-$query = "select distinct icp from icpincident ;";
+if(isset($_GET['dataset'])){
+	$dataset = $_GET['dataset'];	
+}else{
+	$dataset = 'all';
+}
+i
+f ($dataset == 'all'){
+	$query = "select icp from $project_table";
+}else{
+	$query = "select distinct icp from icpincident" ;
+}
 
 $icp_list = mysql_query($query);
 
