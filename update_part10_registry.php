@@ -1,4 +1,5 @@
 <?php
+parse_str(implode('&', array_slice($argv, 1)), $_GET);
 include 'settings.php';
 error_reporting(E_ALL); 
 ini_set('display_errors', true);
@@ -24,12 +25,22 @@ $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
 ); 
 
+if(isset($_GET['dataset'])){
+	$dataset = $_GET['dataset'];	
+}else{
+	$dataset = 'all';
+}
+
 $dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 //$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
 //$query = 'select "0000339010EL523"  from dual';
-$query = "select distinct icp from icpincident" ;
+if ($dataset == 'all'){
+	$query = "select icp from $project_table";
+}else{
+	$query = "select distinct icp from icpincident" ;
+}
 //$query = "select '0013546598ELC86' as icp  from dual";
 //$query = "select '0011213452ELCD' as icp  from dual";
 $sth = $dbh->prepare($query);
