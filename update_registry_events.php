@@ -21,7 +21,7 @@ if(isset($_GET['dataset'])){
 	$dataset = 'all';
 }
 i
-f ($dataset == 'all'){
+if ($dataset == 'all'){
 	$query = "select icp from $project_table";
 }else{
 	$query = "select distinct icp from icpincident" ;
