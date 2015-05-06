@@ -43,7 +43,104 @@ $stmt = $dbh->prepare($sql);
 
 
 
+$metering_update ="
 
+
+DROP TABLE IF EXISTS `mat_metering_info`;
+CREATE TABLE `mat_metering_info` (
+  `RecordType` varchar(12) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `icp` varchar(15) NOT NULL DEFAULT '',
+  `MeteringInstallationNumber` int(11) NOT NULL DEFAULT '0',
+  `MeteringComponentSerialNumber` char(25) DEFAULT NULL,
+  `MeteringComponentType` char(1) DEFAULT NULL,
+  `MeterType` char(3) DEFAULT NULL,
+  `AMIFlag` char(6) DEFAULT NULL,
+  `MeteringInstallationCategory` char(1) DEFAULT NULL,
+  `CompensationFactor` decimal(6,0) DEFAULT NULL,
+  `Owner` char(6) DEFAULT NULL,
+  `NumberOfChannelRecords` smallint(6) DEFAULT NULL,
+  `ChannelNumber` smallint(6) DEFAULT NULL,
+  `NumberofDials` smallint(6) DEFAULT NULL,
+  `RegisterContentCode` char(6) DEFAULT NULL,
+  `PeriodofAvailability` smallint(6) DEFAULT NULL,
+  `GenericPricecode`  char(16) DEFAULT NULL,
+  `UnitofMeasurement` char(6) DEFAULT NULL,
+  `EnergyFlowDirection` char(1) DEFAULT NULL,
+  `AccumulatorType` char(1) DEFAULT NULL,
+  `SettlementIndicator` char(6) DEFAULT NULL,
+  `EventReading` char(12) DEFAULT NULL,
+  `HighestMeteringCategory` smallint(6) DEFAULT NULL,
+  `MeteringInstallationLocationCode` char(50) DEFAULT NULL,
+  `ATHParticipantIdentifier` char(4) DEFAULT NULL,
+  `MeteringInstallationType` char(3) DEFAULT NULL,
+  `MeteringInstallationCertificationType` char(1) DEFAULT NULL,
+  `MeteringInstallationCertificationDate` date DEFAULT NULL,
+  `MeteringInstallationCertificationExpiryDate` date DEFAULT NULL,
+  `ControlDeviceCertificationFlag` binary(1) DEFAULT NULL,
+  `CertificationVariations` char(1) DEFAULT NULL,
+  `CertificationVariationsExpiryDate` date DEFAULT NULL,
+  `CertificationNumber` char(25) DEFAULT NULL,
+  `MaximumInterrogationCycle` int(11) DEFAULT NULL,
+  `LeasePriceCode` char(6) DEFAULT NULL,
+  `NumberOfComponentRecords` smallint(6) DEFAULT NULL,
+  `orderby1` bigint(20) NOT NULL DEFAULT '0',
+  `orderby2` int(11) NOT NULL DEFAULT '0',
+  `orderby3` varchar(25) NOT NULL DEFAULT '',
+  `orderby4` varchar(6) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  KEY `metering_icp_idx` (`icp`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+delimiter ;;
+CREATE TRIGGER `before_metering` BEFORE INSERT ON `mat_metering_info` FOR EACH ROW BEGIN
+
+if new.RegisterContentCode is not null
+and new.RegisterContentCode != ' '
+and substr(new.RegisterContentCode,1,1) != '7'
+THEN
+        set new.GenericPriceCode = concat(new.RegisterContentCode, new.PeriodofAvailability);
+ELSE
+        set new.GenericPriceCode = '';
+end if;
+
+IF new.CompensationFactor = 0
+THEN
+        set new.CompensationFactor = null;
+END IF;
+IF new.MeterType = ''
+THEN
+        set new.MeterType = null;
+END IF;
+IF new.MeteringInstallationCategory = ''
+THEN
+        set new.MeteringInstallationCategory = null;
+END IF;
+IF new.RegisterContentCode = ''
+THEN
+        set new.RegisterContentCode = null;
+END IF;
+IF new.UnitofMeasurement = ''
+THEN
+        set new.UnitofMeasurement = null;
+END IF;
+IF new.EnergyFlowDirection = ''
+THEN
+        set new.EnergyFlowDirection = null;
+END IF;
+IF new.AccumulatorType = ''
+THEN
+        set new.AccumulatorType = null;
+END IF;
+IF new.SettlementIndicator = ''
+THEN
+        set new.SettlementIndicator = null;
+END IF;
+
+END;
+ ;;
+delimiter ;
+
+insert into mat_metering_info  select * from vw_metering_info;
+
+";
 
 
 ?>
