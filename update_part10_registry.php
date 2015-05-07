@@ -40,12 +40,12 @@ include 'statements.php';
 //$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
 //$query = 'select "0000339010EL523"  from dual';
 if ($dataset == 'all') {
-    $query = "select icp from $project_table limit 1, 10";
+    $query = "select icp from $project_table limit 100, 1000";
 } else {
     $query = "select distinct icp from icpincident";
 }
 //$query = "select '0013546598ELC86' as icp  from dual";
-//$query = "select '0011213452ELCD' as icp  from dual";
+//$query = "select '0010330024ELDFA' as icp  from dual";
 $sth = $dbh->prepare($query);
 $sth->execute();
 
@@ -103,9 +103,26 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $update_record->poc = $target_result->icpDetails_v1Result->myNetworkHistory->bus;
     //echo " poc2 $update_record->poc";
     if (isset($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList)) {
-        $update_record->shared_icp_list = trim($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList, "\n\r");
+		if (count($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList) > 1){
+			var_dump($target_result);
+			exit();
+		}
+	/*echo "Getting Class: \n";
+	$class = get_class($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList);
+	echo "Class is $class: \n";
+	var_export($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList) ;
+	
+	echo "\n Getting List: \n";
+	$sharedicplist = (array) $target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList;
+	echo "List is $sharedicplist[1]: \n";
+	var_dump($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList);
+	echo "\nNumber of Elelments in list: ". count($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList),"\n";
+	
+        $update_record->shared_icp_list = trim($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList[0], "\n\r");
+	var_dump($target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList);
+	echo "All Shared ICP list $target_result->icpDetails_v1Result->myNetworkHistory->allSharedICPsList \n";	
 	var_dump($target_result);
-	exit();
+	exit();*/
     }
     
     $update_record->directbilleddetails      = $target_result->icpDetails_v1Result->myNetworkHistory->directBilledDetails;
