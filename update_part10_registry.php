@@ -42,7 +42,7 @@ include 'statements.php';
 //$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
 //$query = 'select "0000339010EL523"  from dual';
 if ($dataset == 'all') {
-    $query = "select icp from $project_table limit 100, 1000";
+    $query = "select icp from $project_table ";
 } else {
     $query = "select distinct icp from icpincident";
 }
