@@ -75,6 +75,8 @@ class icpRegistry
   public $switchInProgressMEP;
   public $switchInProgress;
   public $installdetails;
+  public $submissionTypeNHH;
+  public $submissionTypeHHR;
   
   
   }

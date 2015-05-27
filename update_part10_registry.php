@@ -1,5 +1,7 @@
 <?php
+
 parse_str(implode('&', array_slice($argv, 1)), $_GET);
+
 include 'settings.php';
 error_reporting(E_ALL);
 ini_set('display_errors', true);
@@ -44,7 +46,7 @@ if ($dataset == 'all') {
 } else {
     $query = "select distinct icp from icpincident";
 }
-//$query = "select '0013546598ELC86' as icp  from dual";
+//$query = "select '0110003035ELE7A' as icp  from dual";
 //$query = "select '0010330024ELDFA' as icp  from dual";
 $sth = $dbh->prepare($query);
 $sth->execute();
@@ -160,6 +162,9 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         $update_record->chargeablecapacity = $target_result->icpDetails_v1Result->myPricingHistory->chargeableCapacity;
         $update_record->reference          = $target_result->icpDetails_v1Result->myPricingHistory->userRef;
     }
+    
+    $update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
+    $update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
     
     $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
     $update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
@@ -349,6 +354,8 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $stmt->bindValue(':switchInProgressMEP', $update_record->switchInProgressMEP);
     $stmt->bindValue(':switchInProgress', $update_record->switchInProgress);
     $stmt->bindValue(':installdetails', $update_record->installdetails);
+    $stmt->bindValue(':submissionTypeNHH', $update_record->submissionTypeNHH);
+    $stmt->bindValue(':submissionTypeHHR', $update_record->submissionTypeHHR);
     
     
     
