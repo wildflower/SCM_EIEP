@@ -20,7 +20,7 @@ if(isset($_GET['dataset'])){
 }else{
 	$dataset = 'all';
 }
-i
+
 if ($dataset == 'all'){
 	$query = "select icp from $project_table";
 }else{

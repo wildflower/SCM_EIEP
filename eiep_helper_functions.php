@@ -194,7 +194,7 @@ function get_statement($HDR,$dbh){
 echo "Get (prepare SQL) Statement \n";
 	$project_table = project_table($HDR);
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer,fileStatus, fk_electra_files,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:reportMonth,:sender,:fileStatus,:fk_electra_files,:database_action)");
+		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_electra_files,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_electra_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
@@ -220,6 +220,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':fixedVariable',$DET->fixedVariable);
 	$stmt->bindValue(':chargeableDays',$DET->chargeableDays);
 	$stmt->bindValue(':networkCharge',$DET->networkCharge);
+	$stmt->bindValue(':register_code',$DET->registerContentCode);
 	$stmt->bindValue(':reportMonth',$DET->reportMonth);
 	$stmt->bindValue(':sender',$HDR->sender);
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
@@ -345,7 +346,7 @@ $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':isfilenamevalid',$HDR->isValidFilename);   
     $stmt->bindValue(':islinecountvalid',$HDR->lineCountIsValid); 
 //var_dump($stmt);
-$stmt->execute();
+$stmt->execute();:	
 //print_r($stmt->errorInfo());
 //print_r( $stmt->errorCode());
 //echo "\n";
@@ -353,92 +354,5 @@ $stmt->execute();
 return $dbh->lastInsertId();
 
 }
-/*
-
-function get_insert_line($HDR,$DET){
-	$project_table = project_table($HDR);
-	
-	if (strpos(get_class($HDR),'1')){
-		$query = "INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge,  reportmonth, retailer)
-   VALUES ( '".$HDR->fileid."','".$DET->ICP."','".$DET->reportPeriodStartDate."','".$DET->reportPeriodEndDate."','".$DET->unitType."','".$DET->units."','".$DET->status."','".$DET->tariffCode."','".$DET->tariffRate."','".$DET->fixedVariable."','".$DET->chargeableDays."','".$DET->networkCharge."','".$DET->reportMonth."','".$HDR->sender."');";
-	}else{
-		$query = "INSERT INTO `$project_table` (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth)
-   VALUES ( '$HDR->fileid','".$DET->ICP."','".$DET->dataStreamIdentifier ."','".$DET->status."','".$DET->date."','".$DET->tradingPeriod."','".$DET->consumption."','".$DET->reactiveEnergy ."','".$DET->apparentEnergy."','$HDR->reportMonth');";			
-	}
-
-	return $query;
-}
-
-function get_UB_insert_line($HDR,$DET){
-	$project_table = project_table($HDR);
-	$query = "INSERT INTO $project_table (fileid, icp, startdate,  enddate, status, reportmonth, retailer)
-   VALUES ( '".$HDR->fileid."','".$DET->ICP."','".$HDR->reportPeriodStartDate."','".$HDR->reportPeriodEndDate."','".$DET->status."','".$HDR->reportMonth."','".$HDR->sender."');";
-return $query;
-}
-
-function get_delete_line($HDR,$DET){
-	$project_table = project_table($HDR);
-	if (strpos(get_class($HDR),'1')){
-		$query = "DELETE FROM $project_table WHERE  icp = '$DET->ICP' and reportmonth = '$DET->reportMonth' and fixedvariable = '$DET->fixedVariable' and retailer = '$HDR->sender'";
-	}else{
-		$query = "DELETE FROM $project_table WHERE icp = '$DET->ICP'  and reportmonth = '$DET->reportMonth' and retailer = '$HDR->sender'";
-	}
-
-	return $query;
-}
-
-
-$stmt->bindParam(':fileid', $fileid);
-$stmt->bindParam(':ICP', $ICP);
-$stmt->bindParam(':reportPeriodStartDate', $reportPeriodStartDate);
-$stmt->bindParam(':reportPeriodEndDate', $reportPeriodEndDate);
-$stmt->bindParam(':unitType',$unitType);
-$stmt->bindParam(':units',$units);
-$stmt->bindParam(':status',$status);
-$stmt->bindParam(':tariffCode',$tariffCode);
-$stmt->bindParam(':tariffRate',$tariffRate);
-$stmt->bindParam(':fixedVariable',$fixedVariable);
-$stmt->bindParam(':chargeableDays',$chargeableDays);
-$stmt->bindParam(':networkCharge',$networkCharge);
-$stmt->bindParam(':reportMonth',$reportMonth);
-$stmt->bindParam(':sender',$sender);
-
-			$fileid = $HDR->fileid;
-			$ICP = $DET->ICP;
-			$reportPeriodStartDate = $DET->reportPeriodStartDate;
-			$reportPeriodEndDate = $DET->reportPeriodEndDate;
-			$unitType = $DET->unitType;
-			$units = $DET->units;
-			$status = $DET->status;
-			$tariffCode = $DET->tariffCode;
-			$tariffRate = $DET->tariffRate;
-			$fixedVariable = $DET->fixedVariable;
-			$chargeableDays = $DET->chargeableDays;
-			$networkCharge = $DET->networkCharge;
-			$reportMonth = $DET->reportMonth;
-			$sender = $HDR->sender;
-			
-		//check for a duplicate record before inserting a new one
-		//Not always a duplicate more likely a UB record from another Retailer
-		$query = "SELECT count(*) FROM $project_table WHERE icp = '".$lineDetails[1]."' and startdate = '".$startdate->format('Y-m-d')."' and enddate = '".$enddate->format('Y-m-d')."' and status = '".$lineDetails[7]."' and pricecode = '".$lineDetails[11] ."' and pricerate = '". $lineDetails[12] ."' and fixedvariable ='".$lineDetails[13] ."' and charge = '". $lineDetails[15] ."' and retailer = '$sender'";
-		$result = mysql_query($query);
-		// Check result
-		// This shows the actual query sent to MySQL, and the error. Useful for debugging.
-			if (!$result) {
-				$message  = 'Invalid query: ' . mysql_error() . "\n";
-				$message .= 'Whole query: ' . $query;
-				die($message);
-			}		
-			
-			if(mysql_result($result, 0)){
-				echo mysql_result($result, 0). $query."\n";
-				fwrite($errors, mysql_result($result, 0). $query."\n");
-				//" ICP $lineDetails[1] $reportmonth from $fileid of $filename \n";
-				//continue;				
-			}
-
-		}	
-		
-		*/
 
 ?>

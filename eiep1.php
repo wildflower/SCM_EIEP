@@ -93,7 +93,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 		
 		
 		$count = $count + 1;	
-l
+
 		} //DET caase
 		
 		
