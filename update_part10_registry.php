@@ -23,7 +23,7 @@ $project_table = $project . '_registry';
 $errors = fopen('registry_updates.txt', 'a');
 
 $count = 0;
-
+ 
 $dsn     = 'mysql:host=localhost;dbname=scm';
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
@@ -32,7 +32,8 @@ $options = array(
 if (isset($_GET['dataset'])) {
     $dataset = $_GET['dataset'];
 } else {
-    $dataset = 'all';
+echo "Parameter dataset is required : all, new, icpincident \n ";
+exit;
 }
 
 $dbh = new PDO($dsn, $user, $password, $options);
@@ -43,11 +44,15 @@ include 'statements.php';
 //$query = 'select "0000339010EL523"  from dual';
 if ($dataset == 'all') {
     $query = "select icp from $project_table ";
-} else {
+} elseif ($dataset == 'icpincident') {
     $query = "select distinct icp from icpincident";
+} elseif ($dataset == 'new'){
+	$query = "select icp from electra_registry where icpcreationdate is null";
+}else {
+
+echo "Parameter dataset is required : all, new, icpincident \n ";
+exit;
 }
-//$query = "select '0110003035ELE7A' as icp  from dual";
-//$query = "select '0010330024ELDFA' as icp  from dual";
 $sth = $dbh->prepare($query);
 $sth->execute();
 

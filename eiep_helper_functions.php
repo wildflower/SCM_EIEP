@@ -346,7 +346,7 @@ $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':isfilenamevalid',$HDR->isValidFilename);   
     $stmt->bindValue(':islinecountvalid',$HDR->lineCountIsValid); 
 //var_dump($stmt);
-$stmt->execute();:	
+$stmt->execute();	
 //print_r($stmt->errorInfo());
 //print_r( $stmt->errorCode());
 //echo "\n";

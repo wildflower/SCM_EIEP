@@ -27,6 +27,8 @@ if ($dataset == 'all'){
 	$query = "select distinct icp from icpincident" ;
 }
 
+//$query = "select icp from electra_registry where icp not in (select distinct icp from registry_events)";
+
 $icp_list = mysql_query($query);
 
 if (!$icp_list) {
@@ -104,6 +106,7 @@ echo 'Error Code:', $target_result->icpEvents_v1Result->allErrors->WS_Error->cod
 continue;
 }
 if($count != count($target_result->icpEvents_v1Result->allEvents->WS_ICPEvent)){
+fwrite($errors,"Updating events for $target_icp->icpId ".date('Y-m-d')." \n");
 #delete all current records if the counts mismatch then load the records
 $sql = "delete from registry_events where icp = '$target_icp->icpId'";
 mysql_query($sql);
@@ -143,6 +146,6 @@ else{
 mysql_close($link);
 $end_time = time();
 $time = $end_time - $start_time;
-echo "$icp_count ICPs updated with $event_count events in $time seconds";
+echo "$icp_count ICPs updated with $event_count events in $time seconds \n\n";
 fwrite($errors,"$icp_count ICPs updated with $event_count events in $time seconds ".date('Y-m-d')." \n");
 ?>
