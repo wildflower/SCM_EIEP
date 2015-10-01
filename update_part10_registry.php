@@ -16,9 +16,16 @@ $wsdl       = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?Web
 $client     = new SoapClient($wsdl, array(
     'trace' => 1
 ));
+if(isset($_GET['project'])){
+	$project = $_GET['project'];
+}else
+{
+	$project = 'electra';
+}
 
-$project       = 'electra';
-$project_table = $project . '_registry';
+$project_table = $project.'_registry';
+
+echo "Working with $project_table \n";
 
 $errors = fopen('registry_updates.txt', 'a');
 

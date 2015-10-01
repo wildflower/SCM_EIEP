@@ -6,7 +6,17 @@ $wsdl = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?WebServic
 $wsdl = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?WebService&serviceName=WSRegistry&listName=WSP_Registry2&wsdl=wsdl";
 $client = new SoapClient($wsdl,array('trace'=>1));
 
-$project_table = 'electra_registry';
+if(isset($_GET['project'])){
+	$project = $_GET['project'];
+}else
+{
+	$project = 'electra';
+}
+
+$project_table = $project.'_registry';
+
+echo "Working with $project_table \n";
+
 $errors = fopen('registry_updates.txt','a');
 
 $link = mysql_connect('localhost', $user, $password);
