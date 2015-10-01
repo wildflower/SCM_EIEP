@@ -26,7 +26,7 @@ class LIST_HDR
             "time" => $this->time,            
             "numberOfDetailRecords" => $this->numberOfDetailRecords,
 	    "filestatus" => $this->fileStatus,
-	    "$fk_files" => $this->fk_files
+	    "fk_files" => $this->fk_files
         );
     }
     
@@ -43,8 +43,9 @@ class LIST_HDR
     
     function validate()
     {
-     global $processing_status;
-    global $errors;
+		global $processing_status;
+		global $errors;
+		
         $filters     = array();
         $date        = new Zend_Validate_Date(array(
             'format' => 'd/m/Y'
@@ -52,6 +53,48 @@ class LIST_HDR
         $time        = new Zend_Validate_Date(array(
             'format' => 'G:i:s'
         ));
+		
+		 $validators = array(
+            'filetype' => array(
+                'Alpha',
+                new Zend_Validate_StringLength(array(
+                    'max' => 9
+                ))
+            ),
+            'sender' => array(
+                'Alpha',
+                new Zend_Validate_StringLength(array(
+                    'max' => 4
+                ))
+            ),
+            'recipient' => array(
+                'Alpha',
+                new Zend_Validate_StringLength(array(
+                    'max' => 4
+                ))
+            ),
+            'date' => $date,
+            'time' => $time,
+            
+            'numberOfDetailRecords' => array(
+                'Digits',
+                new Zend_Validate_StringLength(array(
+                    'max' => 8
+                ))
+            )
+        );
+		
+		$input = new Zend_Filter_Input($filters, $validators, $this->build_array());
+        if ($input->isValid()) {
+            echo "LIST HDR OK\n";
+			$this->filetype  = 'ICPLIST';
+			return true;
+		}else{
+			foreach ($input->getMessages() as $messageId => $message) {
+				echo "Validation failure '$messageId': $message\n";
+			}
+			return false;
+		}
     }
     
 }
@@ -116,12 +159,14 @@ class EIEP1_HDR
     var $isValidFilename;
     var $lineCountIsValid;
     var $database_action;
+	var $filename;
    
     
     function validate()
     {
-     global $processing_status;
-    global $errors;
+		global $processing_status;
+		global $errors;
+		
         $filters     = array();
         $date        = new Zend_Validate_Date(array(
             'format' => 'd/m/Y'
@@ -189,18 +234,30 @@ class EIEP1_HDR
         $input = new Zend_Filter_Input($filters, $validators, $this->build_array());
         if ($input->isValid()) {
             echo "EIEP1 HDR OK\n";
-	    fwrite($processing_status,"EIEP1 HDR OK\n");
+			fwrite($processing_status,"EIEP1 HDR OK for $this->filename \n");
 	    //gotta flip the dates over to fit them into MySQL
-	   $date = new Zend_Date($input->reportPeriodStartDate,'d/m/Y');		
-	   $this->reportPeriodStartDate = $date->toString('Y-m-d');
-	   $date = new Zend_Date($input->reportPeriodEndDate,'d/m/Y');
-	  $this->reportPeriodEndDate = $date->toString('Y-m-d');
-	  $date = new Zend_Date($input->reportRunDate,'d/m/Y');
-	  $this->reportRunDate = $date->toString('Y-m-d');
+			$date = new Zend_Date($input->reportPeriodStartDate,'d/m/Y');		
+			$this->reportPeriodStartDate = $date->toString('Y-m-d');
+			$date = new Zend_Date($input->reportPeriodEndDate,'d/m/Y');
+			$this->reportPeriodEndDate = $date->toString('Y-m-d');
+			$date = new Zend_Date($input->reportRunDate,'d/m/Y');
+			$this->reportRunDate = $date->toString('Y-m-d');
+			return true;
         } else {
 		// How to get this into store_header_details($dbh,$filename,$HDR,TRUE);
-            echo "Something is invalid in here\n";
-	    fwrite($errors,"Something is invalid in the HDR here\n");
+		    echo "Something is invalid in the HDR for $this->filename \n";
+			fwrite($errors,"Something is invalid in the HDR for $this->filename \n");
+			fwrite($processing_status,"Something is invalid in the HDR for $this->filename \n");
+			$messages = $input->getMessages();
+			//var_dump($messages);
+			foreach($messages as $field => $fielderrors){
+				foreach($fielderrors as $error => $message)
+				{
+					echo "$field is $error $message\n";
+					fwrite($errors,"$field is $error $message\n");
+				}				
+			}
+			return false;
         }
         
     }
@@ -227,10 +284,10 @@ class EIEP1_HDR
     }
     
     
-    function EIEP1_HDR($lineDetails){
-	if ($lineDetails[2] =='10'){    
+    function EIEP1_HDR($lineDetails,$filename){
+	if ($lineDetails[2] == '10'){    
 		$this->filetype              = $lineDetails[1];
-		$this->eiepversion              = $lineDetails[2];
+		$this->eiepversion           = $lineDetails[2];
 		$this->sender                = $lineDetails[3];
 		$this->onbehalfsender        = $lineDetails[4];
 		$this->recipient             = $lineDetails[5];
@@ -242,7 +299,8 @@ class EIEP1_HDR
 		$this->reportPeriodEndDate   = $lineDetails[11];
 		$this->reportMonth           = $lineDetails[12];
 		$this->utilityType           = $lineDetails[13];
-		$this->fileStatus            = $lineDetails[14];        
+		$this->fileStatus            = $lineDetails[14];
+		$this->filename				= $filename;
 	}else{
 		$this->filetype              = $lineDetails[1];	
 		$this->sender                = $lineDetails[2];
@@ -257,6 +315,7 @@ class EIEP1_HDR
 		$this->reportMonth           = $lineDetails[11];
 		$this->utilityType           = $lineDetails[12];
 		$this->fileStatus            = $lineDetails[13];
+		$this->filename				= $filename;
 	}
 	
 	switch ($this->fileStatus ){

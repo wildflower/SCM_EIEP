@@ -6,11 +6,11 @@ include 'eiep_helper_functions.php';
 include 'settings.php';
 
 $start_time = time();
-$dbh = new PDO('mysql:host=localhost;dbname=scm', $user, $password);
+$dbh = new PDO('mysql:host=127.0.0.1;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 $errors = fopen('electra-errors.txt','a');
-$processing_status = fopen('electra-october-status.txt','a');
+$processing_status = fopen('electra-status.txt','a');
 
 
 $eiep1 = new VALIDATE_EIEP1_DET();       	
@@ -25,7 +25,7 @@ $xfiles = array();
 $rfiles = array();
 $count = 0;
 $filecount = 0;
-echo "before for each \n";
+
 
 if(isset($_GET['path'])){
 	$path = $_GET['path'];
@@ -33,7 +33,12 @@ if(isset($_GET['path'])){
 	$path = '../electra/*/*';
 }
 
-foreach (glob($path) as $filename) {
+$files = glob($path);
+
+echo "Starting to process ". count($files)." files matching $path \n";
+fwrite($processing_status,"Starting to process ". count($files)." files matching $path \n");
+
+foreach ($files as $filename) {
 
 $handle   = fopen($filename, 'r');
 
@@ -47,10 +52,15 @@ $filecount++;
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
-		$HDR = get_valid_HDR($lineDetails);
+		$HDR = get_valid_HDR($lineDetails,$filename);
+		if($HDR == null){
+			fwrite($processing_status ,"Validate is null \n");	
+			continue 3;
+		}
 		validateLineCount($HDR,$filename);
 		$HDR->fk_files = store_header_details($HDR,$filename);
-			    
+		fwrite($processing_status ,"After validate line count \n");			    
+		
 		if(!$HDR->lineCountIsValid)
 		{
 			break 2;		
@@ -73,7 +83,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 		}
 		//prepare the insert statement for the type of DET lines to follow
 		$stmt = get_statement($HDR,$dbh);
-		
+		fwrite($processing_status ,"Statment received  \n");			    
 	break;
 	}
     

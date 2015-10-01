@@ -26,7 +26,7 @@ $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 	if ( $HDR->sender == "HAWK" && ($HDR->recipient == "MERI" ||  $HDR->recipient == "PUNZ"))
 	{
 		$table = 'unison_invoice';
-	}elseif($HDR->filetype == "RSICPLIST"){
+	}elseif($HDR->filetype == "ICPLIST"){
 		$table = get_project($HDR->recipient)."registry";
 	}
 	else{
@@ -56,14 +56,19 @@ echo "Recipient is : $recipient \n" ;
 		case 'NPOW':
 			$table = 'northpower_';
 			break;
-			
+		case 'DUNW':
+			$table = 'aurora_';
+			break;
+		case 'DUNE':
+			$table = 'aurora_';
+			break;			
 		default:
 			$table = 'sunrise_';
 	}
 return $table;
 }
 
-function get_valid_HDR($lineDetails){
+function get_valid_HDR($lineDetails,$filename){
 	switch ($lineDetails[1]) {
 	
 	case  "ICPHH":
@@ -76,17 +81,21 @@ function get_valid_HDR($lineDetails){
 	case  "SUMAB":
 	case  "SUMMMNM":
 	case  "SUMNM":
-		$HDR = new EIEP1_HDR($lineDetails);							
+		$HDR = new EIEP1_HDR($lineDetails,$filename);							
 		break;
 	case  "RSICPLIST":
 		$HDR = new LIST_HDR($lineDetails);							
 		break;
 	default:
-		"function get_valid_HDR can't tell what file this is by the HDR: $lineDetails[1]) \n";	
+		echo "function get_valid_HDR can't tell what file this is by the HDR: $lineDetails[1]) \n";	
 		exit();
 	}
-	$HDR->validate();
-return $HDR;	
+	if($HDR->validate()){
+		return $HDR;	
+	}else{
+		
+		return null;
+	}
 }
 
 
@@ -115,8 +124,12 @@ fclose($linecounthandle);
 
 function validateFilename($HDR,$FILE)
 {
+	global $errors;
+	global $processing_status;
 	if(($HDR->sender != $FILE->from) || ($HDR->recipient != $FILE->to) || ($HDR->filetype != $FILE->filetype)|| ($HDR->reportMonth != $FILE->reportmonth)){
-	 echo "Filename doesn't validate against HDR record \n";
+		echo "Filename doesn't validate against HDR record \n";
+		fwrite($errors, "Filename doesn't validate against HDR record $filename \n");
+		fwrite($processing_status, "Filename doesn't validate against HDR record $filename \n");
 	 $HDR->isValidFilename= 0;
 	 }
 $HDR->isValidFilename = 1;
@@ -133,7 +146,7 @@ $handle   = fopen($filename, 'r');
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
-		$HDR = get_valid_HDR($lineDetails);	
+		$HDR = get_valid_HDR($lineDetails,$filename);			
 		$stmt = get_statement($HDR,$dbh);	
 		$project_table = project_table($HDR);		
 		break;
@@ -168,7 +181,7 @@ $handle   = fopen($filename, 'r');
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
-		$HDR = get_valid_HDR($lineDetails);
+		$HDR = get_valid_HDR($lineDetails,$filename);		
 		$project_table = project_table($HDR);
 			$dbh->exec("UPDATE $project_table  set database_action = 'D' WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
 			$stmt = get_statement($HDR,$dbh);
