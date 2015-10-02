@@ -31,7 +31,7 @@ $errors = fopen('registry_updates.txt', 'a');
 
 $count = 0;
  
-$dsn     = 'mysql:host=localhost;dbname=scm';
+$dsn     = 'mysql:host=127.0.0.1;dbname=scm';
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
 );
@@ -54,7 +54,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'icpincident') {
     $query = "select distinct icp from icpincident";
 } elseif ($dataset == 'new'){
-	$query = "select icp from electra_registry where icpcreationdate is null";
+	$query = "select icp from $project_table where icpcreationdate is null limit 0,10";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -181,7 +181,13 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
     $update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
     $update_record->unmflag           = $target_result->icpDetails_v1Result->myTraderHistory->unmFlag;
-    $update_record->dailyunmeteredkwh = $target_result->icpDetails_v1Result->myTraderHistory->dailyUnmeteredkWh;
+	if ($update_record->unmflag == false){
+		$update_record->dailyunmeteredkwh = 0;
+	}
+	else{
+		$update_record->dailyunmeteredkwh = $target_result->icpDetails_v1Result->myTraderHistory->dailyUnmeteredkWh;
+	}
+	
     $update_record->anzsic            = $target_result->icpDetails_v1Result->myTraderHistory->vANZSICcode;
     
     
@@ -250,7 +256,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
                         //		echo "More than 1 channel in this Component \n";
                         for ($j = 0; $j < count($target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent[$k]->allMeteringChannels->MeteringChannel); $j++) {
                             $path          = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent[$k]->allMeteringChannels->MeteringChannel[$j];
-                            $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent->MeteringInstallationNumber, $updateComponent->MeteringComponentSerialNumber);
+                            $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                             set_channel_query($updateChannel, $dbh);
                         }
                     } elseif ($updateComponent->NumberOfChannelRecords == 1) {
@@ -258,7 +264,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
                         // there is only 1 Channel  so there isn't an array that we need to reference from but there's still an Array of Components
                         //			echo $target_result->icpDetails_v1Result->myIcp->icpId;
                         $path          = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent[$k]->allMeteringChannels->MeteringChannel;
-                        $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent->MeteringInstallationNumber, $updateComponent->MeteringComponentSerialNumber);
+                        $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                         set_channel_query($updateChannel, $dbh);
                     } else {
                         //No Channels in this Component
@@ -280,14 +286,14 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
                         //echo "k is $k \n";
                         for ($j = 0; $j < count($target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent->allMeteringChannels->MeteringChannel); $j++) {
                             $path          = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent->allMeteringChannels->MeteringChannel[$j];
-                            $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent->MeteringInstallationNumber, $updateComponent->MeteringComponentSerialNumber);
+                            $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                             set_channel_query($updateChannel, $dbh);
                         }
                     } else {
                         // there is only 1 Channel  so there isn't an array that we need to reference from 
                         //echo $target_result->icpDetails_v1Result->myIcp->icpId;
                         $path          = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent->allMeteringChannels->MeteringChannel;
-                        $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent->MeteringInstallationNumber, $updateComponent->MeteringComponentSerialNumber);
+                        $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                         set_channel_query($updateChannel, $dbh);
                     }
                 }

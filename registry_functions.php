@@ -16,18 +16,33 @@ $updateComponent = new icpComponent() ;
 return $updateComponent;
 }
 
-function set_update_channel($path,$icp,$MeteringInstallationNumber,$MeteringComponentSerialNumber){
+function set_update_channel($path,$icp,$updateComponent){
 $updateChannel = new icpChannel();
 				$updateChannel->icp =$icp;
-				$updateChannel->MeteringInstallationNumber =$MeteringInstallationNumber;
-				$updateChannel->MeteringComponentSerialNumber =$MeteringComponentSerialNumber;
+				$updateChannel->MeteringInstallationNumber = $updateComponent->MeteringInstallationNumber;
+				$updateChannel->MeteringComponentSerialNumber = $updateComponent->MeteringComponentSerialNumber;
 				$updateChannel->ChannelNumber =$path->channelNumber;
-				$updateChannel->NumberofDials = $path->numberOfDials;
+				if($updateComponent->MeteringComponentType == 'M'){
+					$updateChannel->NumberofDials = $path->numberOfDials;
+				}else{
+					$updateChannel->NumberofDials = 0;
+				}
 				$updateChannel->RegisterContentCode = $path->vRegisterContentCode;
-				$updateChannel->PeriodofAvailability = $path->periodOfAvailability;
-				$updateChannel->UnitofMeasurement = $path->vUnitOfMeasurement;
-				$updateChannel->EnergyFlowDirection = $path->energyFlowDirection;
-				$updateChannel->AccumulatorType =$path->accumulatorType;
+				if(($updateComponent->MeteringComponentType == 'M')||($updateComponent->MeteringComponentType == 'D')){
+					$updateChannel->PeriodofAvailability = $path->periodOfAvailability;
+					$updateChannel->UnitofMeasurement = $path->vUnitOfMeasurement;
+					$updateChannel->EnergyFlowDirection = $path->energyFlowDirection;
+					$updateChannel->AccumulatorType =$path->accumulatorType;
+				}else{
+					$updateChannel->PeriodofAvailability = 0;
+					$updateChannel->UnitofMeasurement = 0;
+					$updateChannel->EnergyFlowDirection = 0;
+					$updateChannel->AccumulatorType = 0;
+				}
+				
+				
+				
+				
 				$updateChannel->SettlementIndicator = $path->settlementIndicator;
 				$updateChannel->EventReading =$path->eventReading;
 				
