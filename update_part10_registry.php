@@ -54,7 +54,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'icpincident') {
     $query = "select distinct icp from icpincident";
 } elseif ($dataset == 'new'){
-	$query = "select icp from $project_table where icpcreationdate is null limit 0,10";
+	$query = "select icp from $project_table where icpcreationdate is null";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -77,7 +77,7 @@ $update_record = new icpRegistry();
 while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     
     $target_icp->icpId = $row['icp'];
-    fwrite($errors, "Getting ICP : $target_icp->icpId \n");
+    fwrite($errors, "Getting ICP : $target_icp->icpId ".date('Y-m-d')." \n");
     $target_result = $client->icpDetails_v1($target_icp);
     //print_r($target_result);
     //echo "Response:\n" . $client->__getLastResponse() . "\n";
