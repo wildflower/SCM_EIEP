@@ -47,7 +47,7 @@ $dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 include 'statements.php';
  
-//$query = 'select icp from electra_registry where icp in ("0000336021EL7FE") ';
+
 //$query = 'select "0000339010EL523"  from dual';
 if ($dataset == 'all') {
     $query = "select icp from $project_table ";
@@ -55,6 +55,8 @@ if ($dataset == 'all') {
     $query = "select distinct icp from icpincident";
 } elseif ($dataset == 'new'){
 	$query = "select icp from $project_table where icpcreationdate is null";
+}elseif ($dataset == 'specific'){
+	$query = "select icp from $project_table where icp in ('0000492417CE4AF') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -268,7 +270,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
                         set_channel_query($updateChannel, $dbh);
                     } else {
                         //No Channels in this Component
-                        //echo "No channels here \n";
+                        echo "No channels here \n";
                     }
                 }
             } else {
@@ -289,12 +291,15 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
                             $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                             set_channel_query($updateChannel, $dbh);
                         }
-                    } else {
+                    } elseif ($updateComponent->NumberOfChannelRecords == 1) {
                         // there is only 1 Channel  so there isn't an array that we need to reference from 
                         //echo $target_result->icpDetails_v1Result->myIcp->icpId;
                         $path          = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->allMeteringComponents->MeteringComponent->allMeteringChannels->MeteringChannel;
                         $updateChannel = set_update_channel($path, $target_result->icpDetails_v1Result->myIcp->icpId, $updateComponent);
                         set_channel_query($updateChannel, $dbh);
+                    }else {
+                        //No Channels in this Component
+                        echo "No channels here \n";
                     }
                 }
             }
