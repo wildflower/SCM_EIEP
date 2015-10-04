@@ -146,7 +146,8 @@ $handle   = fopen($filename, 'r');
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
-		$HDR = get_valid_HDR($lineDetails,$filename);			
+		$HDR = get_valid_HDR($lineDetails,$filename);
+		$HDR->fk_files = store_header_details($HDR,$filename);		
 		$stmt = get_statement($HDR,$dbh);	
 		$project_table = project_table($HDR);		
 		break;
@@ -184,6 +185,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 		$HDR = get_valid_HDR($lineDetails,$filename);		
 		$project_table = project_table($HDR);
 			$dbh->exec("UPDATE $project_table  set database_action = 'D' WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
+			$HDR->fk_files = store_header_details($HDR,$filename);
 			$stmt = get_statement($HDR,$dbh);
 			break;
 		}

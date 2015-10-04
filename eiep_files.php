@@ -188,7 +188,7 @@ class EIEP1_HDR
             'sender' => array(
                 'Alpha',
                 new Zend_Validate_StringLength(array(
-                    'max' => 4
+                    'max' => 20
                 ))
             ),
             'onbehalfsender' => array(
@@ -206,9 +206,9 @@ class EIEP1_HDR
             'reportRunDate' => $date,
             'reportRunTime' => $time,
             'fileid' => array(
-                'Digits',
+                'Alnum',
                 new Zend_Validate_StringLength(array(
-                    'max' => 12
+                    'max' => 15
                 ))
             ),
             'numberOfDetailRecords' => array(
@@ -383,7 +383,7 @@ class VALIDATE_EIEP1_DET
             'reportPeriodEndDate' => $date,
             'tariffDesc' => array(
                 new Zend_Validate_StringLength(array(
-                    'max' => 50,
+                    'max' => 75,
                     'min' => 0
                 )),
                 'allowEmpty' => true
@@ -391,7 +391,7 @@ class VALIDATE_EIEP1_DET
             'unitType' => array(
                 'Alnum',
                 new Zend_Validate_StringLength(array(
-                    'max' => 25
+                    'max' => 6
                 )),
                 'allowEmpty' => true
             ),
@@ -492,12 +492,12 @@ class EIEP1_DET
 		$this->ICP                   = $lineDetails[1];
 		$this->reportPeriodStartDate = $lineDetails[2];
 		$this->reportPeriodEndDate   = $lineDetails[3];
-		$this->tariffDesc            = $lineDetails[4];
-		$this->unitType              = $lineDetails[5];
-		$this->units                 = $lineDetails[6];
+		$this->tariffDesc            = $lineDetails[4]; // Price category description
+		$this->unitType              = $lineDetails[5]; // Unit of Measure
+		$this->units                 = $lineDetails[6]; // Qty
 		$this->status                = $lineDetails[7];
-		$this->busName               = $lineDetails[8];
-		$this->distId                = $lineDetails[9];
+		$this->busName               = $lineDetails[8]; // GXP
+		$this->distId                = $lineDetails[9]; // Participant Id retailer
 		$this->spare                 = $lineDetails[10];
 		$this->tariffCode            = $lineDetails[11];
 		$this->tariffRate            = $lineDetails[12];

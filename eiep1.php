@@ -11,6 +11,7 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 $errors = fopen('electra-errors.txt','a');
 $processing_status = fopen('electra-status.txt','a');
+$timings = fopen('eiep-timings.txt','a');
 
 
 $eiep1 = new VALIDATE_EIEP1_DET();       	
@@ -58,7 +59,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 			continue 3;
 		}
 		validateLineCount($HDR,$filename);
-		$HDR->fk_files = store_header_details($HDR,$filename);
+		
 		fwrite($processing_status ,"After validate line count \n");			    
 		
 		if(!$HDR->lineCountIsValid)
@@ -81,7 +82,9 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 			$rfiles[] = $filename;			
 			break 2;			
 		}
+		//These are the Initial files - fk_files is the foreign key to the $project_file record
 		//prepare the insert statement for the type of DET lines to follow
+		$HDR->fk_files = store_header_details($HDR,$filename);
 		$stmt = get_statement($HDR,$dbh);
 		fwrite($processing_status ,"Statment received  \n");			    
 	break;
@@ -137,10 +140,11 @@ $time = $end_time - $start_time;
 echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time), " \n";
 
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
+fwrite ($timings, "$filecount files Done, inserted $count records in $time seconds \n");
 
 fclose($errors);
 fclose($processing_status);
-
+fclose($timings);
 $dbh = null;
   // fwrite($out, $lineDetails[1].",".$lineDetails[2].",".$lineDetails[3].",".$lineDetails[4].",".$lineDetails[5].",".$lineDetails[6].",".$lineDetails[7].",".$lineDetails[8].",".$lineDetails[10].",".$lineDetails[11].",".$lineDetails[12].",".$lineDetails[13].",".$lineDetails[14].",".$lineDetails[15].",".$lineDetails[16].",".$lineDetails[17].",".$lineDetails[18].",".$lineDetails[19].",".$lineDetails[20].",".$lineDetails[22].",".$lineDetails[23].",".$lineDetails[24].",".$lineDetails[25].",".$lineDetails[26].",".$lineDetails[27].",".$lineDetails[28].",".$lineDetails[29].",".$lineDetails[30].",".$lineDetails[31].",".$lineDetails[32].",".$lineDetails[33].",".$lineDetails[34].",".$lineDetails[35].",".$lineDetails[36].",".$lineDetails[37].",".$lineDetails[38].",".$lineDetails[39].",".$lineDetails[40].",".$lineDetails[41].",".$lineDetails[42]."\n");
 

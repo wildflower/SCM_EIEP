@@ -33,6 +33,8 @@ if(isset($_GET['dataset'])){
 
 if ($dataset == 'all'){
 	$query = "select icp from $project_table";
+}elseif ($dataset == 'new'){
+	$query = "select icp from $project_table where icpcreationdate is null";
 }else{
 	$query = "select distinct icp from icpincident" ;
 }

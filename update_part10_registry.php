@@ -39,7 +39,7 @@ $options = array(
 if (isset($_GET['dataset'])) {
     $dataset = $_GET['dataset'];
 } else {
-echo "Parameter dataset is required : all, new, icpincident \n ";
+echo "Parameter dataset is required : all, new, icpincident, specific \n ";
 exit;
 }
 
