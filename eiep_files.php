@@ -205,11 +205,10 @@ class EIEP1_HDR
             ),
             'reportRunDate' => $date,
             'reportRunTime' => $time,
-            'fileid' => array(
-                'Alnum',
+            'fileid' => 
                 new Zend_Validate_StringLength(array(
                     'max' => 15
-                ))
+                )
             ),
             'numberOfDetailRecords' => array(
                 'Digits',
