@@ -9,8 +9,8 @@ $start_time = time();
 $dbh = new PDO('mysql:host=127.0.0.1;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
-$errors = fopen('electra-errors.txt','a');
-$processing_status = fopen('electra-status.txt','a');
+$errors = fopen('eiep-errors.txt','a');
+$processing_status = fopen('eiep-status.txt','a');
 $timings = fopen('eiep-timings.txt','a');
 
 
@@ -49,8 +49,12 @@ $filecount++;
  //$delimiter = ',';
  fwrite($processing_status ,"starting $filename with delimiter $delimiter \n");
 
- 
-while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+//echo 'starting loop '.microtime()."\n"; 
+//while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+	while(!feof($handle)) {
+		$line = fgets($handle);
+		$lineDetails = str_getcsv ($line,$delimiter);
+	//echo microtime()."\n"; 
 	switch($lineDetails[0]){
 	case 'HDR':{
 		$HDR = get_valid_HDR($lineDetails,$filename);
