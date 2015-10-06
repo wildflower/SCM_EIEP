@@ -891,6 +891,8 @@ class MyInvoiceDateFilter implements Zend_Filter_Interface
 			return '';        
 		}elseif ($value == '0.01'){
 			return '';        
+		}elseif ($value == '0.02'){
+			return '';        
 		}elseif ($value == 'nil'){
 			return '';        
 		}else{
