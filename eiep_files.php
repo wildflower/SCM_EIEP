@@ -349,16 +349,25 @@ class VALIDATE_EIEP1_DET
 	$myTariffCode->addFilter(new MyTariffCodeFilter());
 	$myTariffRate = new Zend_filter();
 	$myTariffRate->addFilter(new MyTariffRateFilter());
-	$my85Decimal = new Zend_Filter();
-	$my85Decimal->addFilter(new My85DecimalFilter()); 
+	$myInvoiceDate = new Zend_Filter();
+	$myInvoiceDate->addFilter(new MyInvoiceDateFilter());
+	$myInvoiceNumber = new Zend_Filter();
+	$myInvoiceNumber->addFilter(new MyInvoiceNumberFilter());
+	$myChargeableDays = new Zend_Filter();
+	$myChargeableDays->addFilter(new MyChargeableDaysFilter());
 	
         $this->filters = array(
 	'units' => $MyUnits,
 	'status' => array($myStatus,'StringToUpper'),
 	'fixedVariable' => 'StringToUpper',
+	'chargeableDays' => $myChargeableDays,
 	'tariffCode' => $myTariffCode,
 	'tariffRate' => $myTariffRate,
-	'networkcharge' => $my85Decimal	) ;
+	'networkCharge' => $myTariffRate,
+	
+	'invoiceDate' => $myInvoiceDate,
+	'invoiceNumber' => $myInvoiceNumber
+	) ;
         
         $date        = new Zend_Validate_Date(array(
             'format' => 'd/m/Y'
@@ -388,7 +397,6 @@ class VALIDATE_EIEP1_DET
                 'allowEmpty' => true
             ),
             'unitType' => array(
-                'Alnum',
                 new Zend_Validate_StringLength(array(
                     'max' => 6
                 )),
@@ -424,11 +432,11 @@ class VALIDATE_EIEP1_DET
 				'S'
             )),
             'chargeableDays' => array(
-                'Int',
-                'allowEmpty' => true
+                
+                'allowEmpty' => false
             ),
             'networkCharge' => array(
-               // 'Float',
+                'Float',
                 'allowEmpty' => true
             ),
             'reportMonth' => $reportmonth,
@@ -512,7 +520,7 @@ class EIEP1_DET
 		$this->consumerNo            = $lineDetails[20];
 		$this->invoiceDate           = $lineDetails[21];
 		$this->invoiceNumber         = $lineDetails[22];
-        }else{
+        }else{ 											 // not a Part 10 file
 		$this->ICP                   = $lineDetails[1];
 		$this->reportPeriodStartDate = $lineDetails[2];
 		$this->reportPeriodEndDate   = $lineDetails[3];
@@ -870,21 +878,74 @@ class MyTariffCodeFilter implements Zend_Filter_Interface
     }
 }
 
+class MyInvoiceDateFilter implements Zend_Filter_Interface
+{
+    public function filter($value)
+    {
+        // perform some transformation upon $value to arrive on $valueFiltered
+		if ($value == '0'){
+			return '';        
+		}elseif ($value == '-0.01'){
+			return '';        
+		}elseif ($value == '-0.02'){
+			return '';        
+		}elseif ($value == '0.01'){
+			return '';        
+		}elseif ($value == 'nil'){
+			return '';        
+		}else{
+			return $value;
+		}
+    }
+}
+
+class MyInvoiceNumberFilter implements Zend_Filter_Interface
+{
+    public function filter($value)
+    {
+        // perform some transformation upon $value to arrive on $valueFiltered
+		if($value == 'nil'){
+			return '';        
+		}else{
+			return $value;
+		}
+    }
+}
+
+class MyChargeableDaysFilter implements Zend_Filter_Interface
+{
+    public function filter($value)
+    {
+        // perform some transformation upon $value to arrive on $valueFiltered		
+		if($value == 'nil'){			
+			return 0;        
+		}elseif($value == ''){			
+			return 0;
+		}elseif($value == NULL){			
+			return 0;
+		}else{			
+			return $value;
+		}
+    }
+}
+
 
 class MyTariffRateFilter implements Zend_Filter_Interface
 {
     public function filter($value)
     {
-        // perform some transformation upon $value to arrive on $valueFiltered
-		if($value == ''){
+        // perform some transformation upon $value to arrive on $valueFiltered		
+		if($value == ''){			
 			return '0.00';
-			}
-		else{
+		}elseif($value == 'nil'){			
+			return '0.00';
+		}else{
 			$english_format_number = number_format($value, 5, '.', '');
 			return $english_format_number;        
 			}
     }
 }
+
 class MyDateFilter implements Zend_Filter_Interface
 {
     public function filter($value)
@@ -895,14 +956,8 @@ class MyDateFilter implements Zend_Filter_Interface
 			
     }
 }
-class My85DecimalFilter implements Zend_Filter_Interface
-{
-    public function filter($value)
-    {
-	$english_format_number = number_format($value, 5, '.', '');
-	return $english_format_number;
-}
-}
+
+
 class EIEP_Filename{
 
 	var $from;

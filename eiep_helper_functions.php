@@ -220,6 +220,7 @@ echo "Get (prepare SQL) Statement \n";
 }
 
 function execute_stmt($HDR,$DET,$stmt){
+	
 	switch (get_class($HDR))
 	{
 	case  "EIEP1_HDR":
@@ -289,8 +290,12 @@ global $errors;
 global $filename;
 
 	if(!$DET->isUBRecord()){
+		//set the $input object to contain a $DET row for validation		
 		$input->setData($DET->build_array());
 		if($input->isValid()){
+		// after validation is called, the $input object has been updated with the applied Zend Filter classes
+		// these updated fields need to be recorded in the $DET row and stored
+		// this way we are gettign valid/usable data stored in the eiep1 table for analysis
 			switch (get_class($HDR) ){
 			case "EIEP1_HDR" :			
 				$DET->reportPeriodStartDate = implode('-', array_reverse(explode('/', $input->reportPeriodStartDate)));
@@ -298,6 +303,7 @@ global $filename;
 				$DET->tariffRate = $input->tariffRate;
 				$DET->units = $input->units;			
 				$DET->networkCharge = $input->networkCharge;
+				$DET->chargeableDays = $input->chargeableDays;								
 				break;
 			case  "EIEP3_HDR":
 				$DET->date = implode('-', array_reverse(explode('/', $input->date)));
