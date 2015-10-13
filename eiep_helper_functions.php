@@ -80,7 +80,8 @@ function get_valid_HDR($lineDetails,$filename){
 	case  "SUMMMAB":
 	case  "SUMAB":
 	case  "SUMMMNM":
-	case  "SUMNM":
+	case  "SUMNM":  
+	case  "ICPHHAB":
 		$HDR = new EIEP1_HDR($lineDetails,$filename);							
 		break;
 	case  "RSICPLIST":
