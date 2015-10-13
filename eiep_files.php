@@ -315,6 +315,7 @@ class EIEP1_HDR
 		$this->utilityType           = $lineDetails[12];
 		$this->fileStatus            = $lineDetails[13];
 		$this->filename				= $filename;
+		$this->eiepversion = 6;
 	}
 	
 	switch ($this->fileStatus ){
@@ -495,7 +496,7 @@ class EIEP1_DET
     
     function __construct($lineDetails,$version)
     {
-	if($version){
+	if($version == 10){
 		$this->ICP                   = $lineDetails[1];
 		$this->reportPeriodStartDate = $lineDetails[2];
 		$this->reportPeriodEndDate   = $lineDetails[3];
