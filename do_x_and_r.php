@@ -9,8 +9,8 @@ $start_time = time();
 $dbh = new PDO('mysql:host=127.0.0.1;dbname=scm', $user, $password);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
-$errors = fopen('eiep-errors.txt','a');
-$processing_status = fopen('eiep-status.txt','a');
+$errors = fopen('eiep-xandr-errors.txt','a');
+$processing_status = fopen('eiep-xandr-status.txt','a');
 $timings = fopen('eiep-timings.txt','a');
 
 
@@ -31,6 +31,7 @@ $filecount = 0;
 echo "doing the X Files \n";
 fwrite($processing_status,"doing the X Files \n");
 foreach ($xfiles as $file){
+	$file = rtrim($file);
 	echo $file."\n";
 	fwrite($processing_status," $file \n");
 	do_X_file($file,$dbh,$input_EIEP1,$input_EIEP3);
@@ -38,6 +39,7 @@ foreach ($xfiles as $file){
 echo "doing the R Files  \n";
 fwrite($processing_status,"doing the R Files \n");
 foreach ($rfiles as $file){
+	$file = rtrim($file);
 	echo $file."\n";
 	fwrite($processing_status," $file \n");
 	do_R_file($file, $dbh,$input_EIEP1,$input_EIEP3);

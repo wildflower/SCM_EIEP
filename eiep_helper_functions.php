@@ -141,9 +141,16 @@ function do_X_file($filename,$dbh,$input_EIEP1,$input_EIEP3){
 global $errors;
 global $processing_status;
 global $count;
-global $delimiter;
 
+if(file_exists($filename))
+{
 $handle   = fopen($filename, 'r');
+}else{
+	echo "not there";
+	return false;
+}
+$delimiter = detectDelimiter($handle);
+
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
@@ -177,9 +184,20 @@ function do_R_file($filename,$dbh,$input_EIEP1,$input_EIEP3){
 global $errors;
 global $processing_status;
 global $count;
-global $delimiter;
 
+if ($filename == '../scm/aurora/eiep-14/CTCT_E_DUNE_ICPMMNM_201404_20140528_1858761745.txt')
+{
+	echo "here \n";
+}
+if(file_exists($filename))
+{
 $handle   = fopen($filename, 'r');
+}else{
+	echo "not there \n";
+	return false;
+}
+
+$delimiter = detectDelimiter($handle);
 while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
