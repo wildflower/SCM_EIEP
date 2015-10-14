@@ -833,8 +833,8 @@ class MyDirectionFilter implements Zend_Filter_Interface
     {
         // perform some transformation upon $value to arrive on $valueFiltered
 		if($value == ''){
-			return 'L';}
-		else{
+			return 'L';
+		}else{
 			return $value;        
 			}
     }
@@ -847,9 +847,12 @@ class MyUnitsFilter implements Zend_Filter_Interface
         // perform some transformation upon $value to arrive on $valueFiltered
 		if($value == ''){
 			return '0';}
-		else{
-			return $value;        
-			}
+		elseif($value == 'Equipment'){
+			return 'EQUIP';        
+		}else{
+			return $value;
+		}
+		
     }
 }
 
@@ -859,8 +862,8 @@ class MyStatusFilter implements Zend_Filter_Interface
     {
         // perform some transformation upon $value to arrive on $valueFiltered
 		if($value == ''){
-			return 'ES';}
-		else{
+			return 'ES';
+		}else{
 			return $value;        
 			}
     }
@@ -872,8 +875,8 @@ class MyTariffCodeFilter implements Zend_Filter_Interface
     {
         // perform some transformation upon $value to arrive on $valueFiltered
 		if($value == ''){
-			return 'F-SCM';}
-		else{
+			return 'F-SCM';
+	}else{
 			return $value;        
 			}
     }
