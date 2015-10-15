@@ -359,7 +359,7 @@ class VALIDATE_EIEP1_DET
 	
         $this->filters = array(
 	'units' => $MyUnits,
-	'unitType' => $MyUnits,
+	'mul' => $MyUnits,
 	'status' => array($myStatus,'StringToUpper'),
 	'fixedVariable' => 'StringToUpper',
 	'chargeableDays' => $myChargeableDays,
@@ -851,6 +851,8 @@ class MyUnitsFilter implements Zend_Filter_Interface
 		}elseif($value == 'Equipment'){
 			return 'EQUIP';        
 		}elseif($value == 'multiplier'){
+			return 'MULTI';        
+		}elseif($value == 'Multiplier'){
 			return 'MULTI';        
 		}else{
 			return $value;
