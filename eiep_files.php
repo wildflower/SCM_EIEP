@@ -359,6 +359,7 @@ class VALIDATE_EIEP1_DET
 	
         $this->filters = array(
 	'units' => $MyUnits,
+	'unitType' => $MyUnits,
 	'status' => array($myStatus,'StringToUpper'),
 	'fixedVariable' => 'StringToUpper',
 	'chargeableDays' => $myChargeableDays,
@@ -846,9 +847,11 @@ class MyUnitsFilter implements Zend_Filter_Interface
     {
         // perform some transformation upon $value to arrive on $valueFiltered
 		if($value == ''){
-			return '0';}
-		elseif($value == 'Equipment'){
+			return '0';
+		}elseif($value == 'Equipment'){
 			return 'EQUIP';        
+		}elseif($value == 'multiplier'){
+			return 'MULTI';        
 		}else{
 			return $value;
 		}
@@ -898,6 +901,8 @@ class MyInvoiceDateFilter implements Zend_Filter_Interface
 		}elseif ($value == '0.02'){
 			return '';        
 		}elseif ($value == 'nil'){
+			return '';        
+		}elseif ($value == '00/00/0000'){
 			return '';        
 		}else{
 			return $value;

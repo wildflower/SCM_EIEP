@@ -321,6 +321,7 @@ global $filename;
 				$DET->reportPeriodEndDate = implode('-', array_reverse(explode('/', $input->reportPeriodEndDate)));
 				$DET->tariffRate = $input->tariffRate;
 				$DET->units = $input->units;			
+				$DET->unitType = $input->unitType;	
 				$DET->networkCharge = $input->networkCharge;
 				$DET->chargeableDays = $input->chargeableDays;								
 				break;
