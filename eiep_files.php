@@ -431,7 +431,8 @@ class VALIDATE_EIEP1_DET
             'fixedVariable' => new Zend_Validate_InArray(array(
                 'V',
                 'F',
-				'S'
+				'S',
+				' V'
             )),
             'chargeableDays' => array(
                 
