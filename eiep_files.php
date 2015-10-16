@@ -907,6 +907,8 @@ class MyInvoiceDateFilter implements Zend_Filter_Interface
 			return '';        
 		}elseif ($value == '00/00/0000'){
 			return '';        
+		}elseif (ctype_digit($value)){
+			return '';        
 		}else{
 			return $value;
 		}
