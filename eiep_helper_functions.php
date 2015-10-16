@@ -107,10 +107,11 @@ global $delimiter;
 $linecounthandle   = fopen($filename, 'r');
 $linecount = 0;
 	while (($linecountdetails = fgetcsv($linecounthandle, 1000, $delimiter)) !== FALSE) {
-			if ($linecountdetails [0] =='DET'){
+			if (strtoupper($linecountdetails [0]) == 'DET'){
 				$linecount++;
 			}
 		}
+		
 		if ($HDR->numberOfDetailRecords  != ($linecount)){
 			echo "Wrong HDR Line Count $HDR->numberOfDetailRecords for $linecount $filename \n";
 			fwrite($errors, "Wrong HDR Line Count $HDR->numberOfDetailRecords for $linecount $filename \n");
