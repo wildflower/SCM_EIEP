@@ -29,18 +29,23 @@ $filecount = 0;
 
 
 if(isset($_GET['path'])){
+	// this is to get a list/array of filenames to process from a directory from the CLI
 	$path = $_GET['path'];
-}else{
-	$path = '../electra/*/*';
+	$files = glob($path);
 }
 
-$files = glob($path);
+if(isset($_GET['HDR'])){
+	// this is to get a list/array of filenames to process from a file
+	$hdrfile = $_GET['HDR'];
+	$files = file($hdrfile);
+	$path = $hdrfile;
+}
 
 echo "Starting to process ". count($files)." files matching $path \n";
 fwrite($processing_status,"Starting to process ". count($files)." files matching $path \n");
 
 foreach ($files as $filename) {
-
+$filename = rtrim($filename);  // this is to get a list/array of filenames to process from a file
 $handle   = fopen($filename, 'r');
 
 $filecount++;
