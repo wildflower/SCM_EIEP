@@ -359,7 +359,7 @@ class VALIDATE_EIEP1_DET
 	
         $this->filters = array(
 	'units' => $MyUnits,
-	'mul' => $MyUnits,
+	'unitType' => $MyUnits,
 	'status' => array($myStatus,'StringToUpper'),
 	'fixedVariable' => 'StringToUpper',
 	'chargeableDays' => $myChargeableDays,
