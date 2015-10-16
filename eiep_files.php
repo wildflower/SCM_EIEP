@@ -284,53 +284,60 @@ class EIEP1_HDR
     
     
     function EIEP1_HDR($lineDetails,$filename){
-	if ($lineDetails[2] == '10'){    
-		$this->filetype              = $lineDetails[1];
-		$this->eiepversion           = $lineDetails[2];
-		$this->sender                = $lineDetails[3];
-		$this->onbehalfsender        = $lineDetails[4];
-		$this->recipient             = $lineDetails[5];
-		$this->reportRunDate         = $lineDetails[6];
-		$this->reportRunTime         = $lineDetails[7];
-		$this->fileid                = $lineDetails[8];
-		$this->numberOfDetailRecords = $lineDetails[9];
-		$this->reportPeriodStartDate = $lineDetails[10];
-		$this->reportPeriodEndDate   = $lineDetails[11];
-		$this->reportMonth           = $lineDetails[12];
-		$this->utilityType           = $lineDetails[13];
-		$this->fileStatus            = $lineDetails[14];
-		$this->filename				= $filename;
-	}else{
-		$this->filetype              = $lineDetails[1];	
-		$this->sender                = $lineDetails[2];
-		$this->onbehalfsender        = $lineDetails[3];
-		$this->recipient             = $lineDetails[4];
-		$this->reportRunDate         = $lineDetails[5];
-		$this->reportRunTime         = $lineDetails[6];
-		$this->fileid                = $lineDetails[7];
-		$this->numberOfDetailRecords = $lineDetails[8];
-		$this->reportPeriodStartDate = $lineDetails[9];
-		$this->reportPeriodEndDate   = $lineDetails[10];
-		$this->reportMonth           = $lineDetails[11];
-		$this->utilityType           = $lineDetails[12];
-		$this->fileStatus            = $lineDetails[13];
-		$this->filename				= $filename;
-		$this->eiepversion = 6;
-	}
+		if ($lineDetails[2] == '10'){    
+			$this->filetype              = $lineDetails[1];
+			$this->eiepversion           = $lineDetails[2];
+			$this->sender                = $lineDetails[3];
+			$this->onbehalfsender        = $lineDetails[4];
+			$this->recipient             = $lineDetails[5];
+			$this->reportRunDate         = $lineDetails[6];
+			$this->reportRunTime         = $lineDetails[7];
+			$this->fileid                = $lineDetails[8];
+			$this->numberOfDetailRecords = $lineDetails[9];
+			$this->reportPeriodStartDate = $lineDetails[10];
+			$this->reportPeriodEndDate   = $lineDetails[11];
+			$this->reportMonth           = $lineDetails[12];
+			$this->utilityType           = $lineDetails[13];
+			$this->fileStatus            = $lineDetails[14];
+			$this->filename				= $filename;
+		}else{
+			$this->filetype              = $lineDetails[1];	
+			$this->sender                = $lineDetails[2];
+			$this->onbehalfsender        = $lineDetails[3];
+			$this->recipient             = $lineDetails[4];
+			$this->reportRunDate         = $lineDetails[5];
+			$this->reportRunTime         = $lineDetails[6];
+			$this->fileid                = $lineDetails[7];
+			$this->numberOfDetailRecords = $lineDetails[8];
+			$this->reportPeriodStartDate = $lineDetails[9];
+			$this->reportPeriodEndDate   = $lineDetails[10];
+			$this->reportMonth           = $lineDetails[11];
+			$this->utilityType           = $lineDetails[12];
+			$this->fileStatus            = $lineDetails[13];
+			$this->filename				= $filename;
+			$this->eiepversion = 6;
+		}
 	
-	switch ($this->fileStatus ){
-		case "I":
-			$this->database_action = "C";
-		break;
-		case "X":
-			$this->database_action = "D";
-		break;
-		case "R":
-			$this->database_action = "U";
-		break;	
+		switch ($this->fileStatus ){
+			case "I":
+				$this->database_action = "C";
+				break;
+			case "X":
+				$this->database_action = "D";
+				break;
+			case "R":
+				$this->database_action = "U";
+				break;	
 	
-	}
+		}
     
+    }
+	
+	function write($filehandler)
+    {
+		// in Part 10 format/order
+		$string = "$this->filetype,$this->eiepversion,$this->sender,$this->onbehalfsender,$this->recipient,$this->reportRunDate,$this->reportRunTime,$this->fileid,$this->numberOfDetailRecords,$this->reportPeriodStartDate,$this->reportPeriodEndDate,$this->reportMonth,$this->utilityType,$this->fileStatus,$this->filename\n";
+	fwrite($filehandler,$string);
     }
     
 }
@@ -554,7 +561,8 @@ class EIEP1_DET
     }
     function write($filehandler)
     {
-	$string = "$this->ICP,$this->reportPeriodStartDate,$this->reportPeriodEndDate,$this->tariffDesc,$this->unitType,$this->units,$this->status,$this->busName,$this->distId,$this->spare,$this->tariffCode,$this->tariffRate,$this->fixedVariable,$this->chargeableDays,$this->networkCharge,$this->reportMonth,$this->customerNo,$this->consumerNo,$this->invoiceDate,$this->invoiceNumber\n";
+		// in Part 10 format/order
+		$string = "$this->ICP,$this->reportPeriodStartDate,$this->reportPeriodEndDate,$this->tariffDesc,$this->unitType,$this->units,$this->status,$this->busName,$this->distId,$this->spare,$this->tariffCode,$this->tariffRate,$this->fixedVariable,$this->chargeableDays,$this->networkCharge,$this->registerContentCode,$this->periodOfAvailability,$this->reportMonth,$this->customerNo,$this->consumerNo,$this->invoiceDate,$this->invoiceNumber\n";
 	fwrite($filehandler,$string);
     }
     

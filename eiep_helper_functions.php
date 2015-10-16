@@ -348,9 +348,11 @@ global $filename;
 				var_dump($messages);
 				fwrite($processing_status ,"Field $key has failed ".count($value)." tests  \n");
 			}				
-			//fwrite($errors,"# $filename \n");
-			fwrite($processing_status ,"# $filename \n");
+			fwrite($errors,"# $filename \n");
+			$HDR->write($errors);
 			$DET->write($errors);
+			
+			fwrite($processing_status ,"# $filename \n");
 			$DET->write($processing_status );					
 		}
 	}else{
@@ -369,7 +371,7 @@ $project_table = get_project($HDR->recipient)."files";
 echo "Line count value ".$HDR->lineCountIsValid." \n";
 
 var_dump($HDR);
-$stmt = $dbh->prepare("INSERT INTO $project_table (filetype, sender, onbehalfsender, recipient, reportRunDate,  reportRunTime, fileid, numberOfRecords,reportPeriodStart,     reportPeriodEnd,     reportMonth,   utilityType,  fileStatus,  filename, isfilenamevalid, islinecountvalid)VALUES ( :filetype,    :sender,    :onbehalfsender,    :recipient,    :reportRunDate,    :reportRunTime,    :fileid,    :numberOfDetailRecords,    :reportPeriodStartDate,    :reportPeriodEndDate,    :reportMonth,    :utilityType, :fileStatus, :filename, :isfilenamevalid, :islinecountvalid)");
+$stmt = $dbh->prepare("INSERT INTO $project_table (filetype, sender, onbehalfsender, recipient, reportRunDate,  reportRunTime, fileid, numberOfRecords,reportPeriodStart,     reportPeriodEnd,     reportMonth,   utilityType,  fileStatus,  filename, isfilenamevalid, islinecountvalid, eiepversion)VALUES ( :filetype,    :sender,    :onbehalfsender,    :recipient,    :reportRunDate,    :reportRunTime,    :fileid,    :numberOfDetailRecords,    :reportPeriodStartDate,    :reportPeriodEndDate,    :reportMonth,    :utilityType, :fileStatus, :filename, :isfilenamevalid, :islinecountvalid, :eiepversion)");
 
 $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':sender',$HDR->sender);
@@ -387,6 +389,7 @@ $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':filename',$filename);
     $stmt->bindValue(':isfilenamevalid',$HDR->isValidFilename);   
     $stmt->bindValue(':islinecountvalid',$HDR->lineCountIsValid); 
+	$stmt->bindValue(':eiepversion',$HDR->eiepversion); 
 //var_dump($stmt);
 $stmt->execute();	
 //print_r($stmt->errorInfo());

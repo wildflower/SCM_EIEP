@@ -36,6 +36,8 @@ if ($type == 'XandR'){
 	$rfiles = file('rfiles.txt');
 }elseif($type == 'HDR'){
 	$hdrfiles = file('hdrfiles.txt');
+}elseif($type == 'DET'){
+	$detrows = file('../scm/aurora/detrows.txt');
 }
 
 if(isset($xfiles)) {
@@ -68,6 +70,26 @@ if(isset($hdrfiles)){
 		echo $file."\n";
 		fwrite($processing_status," $file \n");
 		do_R_file($file, $dbh,$input_EIEP1,$input_EIEP3);
+	}
+}
+
+if(isset($detrows)){
+	echo "doing the DET Rows  \n";
+	fwrite($processing_status,"doing the DET Files \n");
+	foreach ($detrows as $row){
+		$row = rtrim($row);		
+		$filename = pathinfo($row,PATHINFO_FILENAME);
+		echo $filename."\n";
+		//find the HDR records in the DB
+		$stmt = $dbh->prepare("select * from aurora_files where filename like :filename");
+		$stmt->bindValue(':filename', '%'.$filename.'%');
+		$stmt->execute();		
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		var_dump($result);
+		
+		
+		
+		//do_DET($file, $dbh,$input_EIEP1,$input_EIEP3);
 	}
 }
 
