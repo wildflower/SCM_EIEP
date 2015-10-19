@@ -86,10 +86,16 @@ if(isset($detrows)){
 		$stmt->execute();		
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 		var_dump($result);
+		// build a $HDR with $result[] array;
+		$HDR = new EIEP1_HDR();
+		$HDR->load_from_record($result,$filename);
+		
+		//count the items in the DET array 22 = 10  and 20 = 6 to get the HDR->eiepversion
 		
 		
 		
-		//do_DET($file, $dbh,$input_EIEP1,$input_EIEP3);
+		//$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);			
+		//	do_DET($HDR,$DET,$input_EIEP1,$stmt);
 	}
 }
 

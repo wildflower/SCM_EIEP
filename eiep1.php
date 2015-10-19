@@ -83,11 +83,13 @@ $filecount++;
 		if ($HDR->fileStatus == 'X'){
 			//write this filename to X array and continue to next file, once the first list is done go through the X array	
 			fwrite($processing_status ,"X file found $filename \n");
+			echo "X file found $filename \n";
 			$xfiles[] = $filename;	
 			break 2;		
 		}
 		if ($HDR->fileStatus == 'R'){
 			fwrite($processing_status ,"R file found $filename \n");
+			echo "R file found $filename \n";
 			$rfiles[] = $filename;			
 			break 2;			
 		}

@@ -283,7 +283,7 @@ class EIEP1_HDR
     }
     
     
-    function EIEP1_HDR($lineDetails,$filename){
+    function load_from_file($lineDetails,$filename){
 		if ($lineDetails[2] == '10'){    
 			$this->filetype              = $lineDetails[1];
 			$this->eiepversion           = $lineDetails[2];
@@ -332,7 +332,25 @@ class EIEP1_HDR
 		}
     
     }
+	function load_from_record($record,$filename){
+		    
+			$this->filetype              = $record['filetype'];
+			$this->eiepversion           = 10;
+			$this->sender                = $record['sender'];
+			$this->onbehalfsender        = $record['onbehalfsender'];
+			$this->recipient             = $record['recipient'];
+			$this->reportRunDate         = $record['reportRunDate'];
+			$this->reportRunTime         = $record['reportRunTime'];
+			$this->fileid                = $record['fileid'];
+			$this->numberOfDetailRecords = $record['numberofrecords'];
+			$this->reportPeriodStartDate = $record['reportperiodstart'];
+			$this->reportPeriodEndDate   = $record['reportperiodend'];
+			$this->reportMonth           = $record['reportmonth'];
+			$this->utilityType           = $record['utilitytype'];
+			$this->fileStatus            = $record['filestatus'];
+			$this->filename				= $filename;
 	
+	}
 	function write($filehandler)
     {
 		// in Part 10 format/order
@@ -422,7 +440,7 @@ class VALIDATE_EIEP1_DET
                 'RD',
                 'RV',
                 'FL',
-                'VA',
+                'VA',				
 		'Q1'
             )),
             'busName' => array(
@@ -915,7 +933,7 @@ class MyInvoiceDateFilter implements Zend_Filter_Interface
 			return '';        
 		}elseif ($value == '00/00/0000'){
 			return '';        
-		}elseif (ctype_digit($value)){
+		}elseif (ctype_alnum($value)){
 			return '';        
 		}else{
 			return $value;
