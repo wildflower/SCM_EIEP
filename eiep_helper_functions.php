@@ -18,7 +18,7 @@ function detectDelimiter($handle) {
 }
 
 
-function project_table($HDR){
+function get_project_table($HDR){
 // return eiep1 or eiep3
 echo "Project table \n";
 $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
@@ -27,12 +27,11 @@ $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 	{
 		$table = 'unison_invoice';
 	}elseif($HDR->filetype == "ICPLIST"){
-		$table = get_project($HDR->recipient)."registry";
+		$table = $HDR->project."registry";
 	}
 	else{
-	//$table = get_project($HDR->recipient).$class."_staging";
-	$table = get_project($HDR->recipient).$class;
-	
+	//$table = get_project($HDR->recipient).$class."_staging";	
+		$table = $HDR->project.$class;	
 	}
 return $table;
 }
@@ -187,13 +186,9 @@ global $errors;
 global $processing_status;
 global $count;
 
-if ($filename == '../scm/aurora/eiep-14/CTCT_E_DUNE_ICPMMNM_201404_20140528_1858761745.txt')
-{
-	echo "here \n";
-}
 if(file_exists($filename))
 {
-$handle   = fopen($filename, 'r');
+	$handle   = fopen($filename, 'r');
 }else{
 	echo "not there \n";
 	return false;
@@ -204,8 +199,8 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	switch($lineDetails[0]){
 	case 'HDR':{
 		$HDR = get_valid_HDR($lineDetails,$filename);		
-		$project_table = project_table($HDR);
-			$dbh->exec("UPDATE $project_table  set database_action = 'D' WHERE reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender'");
+			$dbh->exec("UPDATE $HDR->project_table  inner join $HDR->project_files on id$HDR->project_files = $HDR->project_table.fk_$HDR->project_files
+			set database_action = 'D' WHERE $HDR->project_table.reportmonth = '$HDR->reportMonth' and retailer = '$HDR->sender' and $HDR->project_files.recipient = '$HDR->recipient'");
 			$HDR->fk_files = store_header_details($HDR,$filename);
 			$stmt = get_statement($HDR,$dbh);
 			break;
@@ -227,10 +222,9 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 }
 
 function get_statement($HDR,$dbh){
-echo "Get (prepare SQL) Statement \n";
-	$project_table = project_table($HDR);
+echo "Get (prepare SQL) Statement \n";	
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_electra_files,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_electra_files,:database_action)");
+		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_$HDR->project_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
@@ -261,7 +255,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':reportMonth',$DET->reportMonth);
 	$stmt->bindValue(':sender',$HDR->sender);
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
-	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);	
+	$stmt->bindValue(":fk_$HDR->project_files",$HDR->fk_files);	
 	$stmt->bindValue(':database_action',$HDR->database_action);	
 	break;
 	case  "EIEP3_HDR":	

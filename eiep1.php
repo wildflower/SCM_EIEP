@@ -105,7 +105,8 @@ $filecount++;
     	//should check startdate and enddate are near reportmonth?
 	  
 		if (strpos(get_class($HDR),'1')){
-			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);			
+			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
+//var_dump($DET);			
 			do_DET($HDR,$DET,$input_EIEP1,$stmt);
 		}elseif(strpos(get_class($HDR),'3')){
 			$DET = new EIEP3_DET($lineDetails);

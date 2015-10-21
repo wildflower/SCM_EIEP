@@ -160,7 +160,8 @@ class EIEP1_HDR
     var $lineCountIsValid;
     var $database_action;
 	var $filename;
-   
+	var $project_files ;
+   var $project_table;
     
     function validate()
     {
@@ -330,7 +331,10 @@ class EIEP1_HDR
 				break;	
 	
 		}
-    
+	$this->project	= get_project($this->recipient);
+    $this->project_files = $this->project."files";
+	$this->project_table = get_project_table($this);
+	
     }
 	function load_from_record($record,$filename){
 		    
