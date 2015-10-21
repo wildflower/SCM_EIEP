@@ -224,7 +224,7 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 function get_statement($HDR,$dbh){
 echo "Get (prepare SQL) Statement \n";	
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_$HDR->project_files,:database_action)");
+		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
@@ -255,7 +255,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':reportMonth',$DET->reportMonth);
 	$stmt->bindValue(':sender',$HDR->sender);
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
-	$stmt->bindValue(":fk_$HDR->project_files",$HDR->fk_files);	
+	$stmt->bindValue(':fk_files',$HDR->fk_files);	
 	$stmt->bindValue(':database_action',$HDR->database_action);	
 	break;
 	case  "EIEP3_HDR":	
