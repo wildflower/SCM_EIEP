@@ -385,7 +385,7 @@ function store_clean_detail_record($HDR,$DET,$stmt,$input){
 			case "LIST_HDR":
 				break;
 			}	
-echo "executing statment \n";			
+
 			execute_stmt($HDR,$DET,$stmt);
 }
 function store_header_details($HDR,$filename){
