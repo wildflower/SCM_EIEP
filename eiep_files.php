@@ -231,7 +231,7 @@ class EIEP1_HDR
             ))
         );
         
-        $input = new Zend_Filter_Input($filters, $validators, $this->build_array());
+        $input = new Zend_Filter_Input($filters, $validators, $this->build_array($this));
         if ($input->isValid()) {
             echo "EIEP1 HDR OK\n";
 			fwrite($processing_status,"EIEP1 HDR OK for $this->filename \n");
@@ -599,9 +599,14 @@ class EIEP1_DET
             return FALSE;
     }
     
-    function build_array()
-    {
-        return $assoc_Array = array(
+    function build_array($HDR)
+    {		
+	if($this->reportMonth == ""){
+		$reportMonth = $HDR->reportMonth;
+	}else{
+		$reportMonth = $this->reportMonth;
+	}
+	    return $assoc_Array = array(
             "ICP" => $this->ICP,
             "reportPeriodStartDate" => $this->reportPeriodStartDate,
             "reportPeriodEndDate" => $this->reportPeriodEndDate,
@@ -617,7 +622,7 @@ class EIEP1_DET
             "fixedVariable" => $this->fixedVariable,
             "chargeableDays" => $this->chargeableDays,
             "networkCharge" => $this->networkCharge,
-            "reportMonth" => $this->reportMonth,
+            "reportMonth" => $reportMonth,
             "customerNo" => $this->customerNo,
             "consumerNo" => $this->consumerNo,
             "invoiceDate" => $this->invoiceDate,
@@ -745,7 +750,7 @@ class EIEP3_HDR
             ))
         );
         
-        $input = new Zend_Filter_Input($filters, $validators, $this->build_array());
+        $input = new Zend_Filter_Input($filters, $validators, $this->build_array($this));
         if ($input->isValid()) {
          //   echo "EIEP6 HDR OK\n";
 	 fwrite($processing_status,"EIEP3 HDR OK \n");

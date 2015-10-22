@@ -104,6 +104,7 @@ function validateLineCount($HDR,$filename){
 global $errors;
 global $processing_status;
 global $delimiter;
+global $hdrfiles;
 $linecounthandle   = fopen($filename, 'r');
 $linecount = 0;
 	while (($linecountdetails = fgetcsv($linecounthandle, 1000, $delimiter)) !== FALSE) {
@@ -113,9 +114,10 @@ $linecount = 0;
 		}
 		
 		if ($HDR->numberOfDetailRecords  != ($linecount)){
-			echo "Wrong HDR Line Count $HDR->numberOfDetailRecords for $linecount $filename \n";
-			fwrite($errors, "Wrong HDR Line Count $HDR->numberOfDetailRecords for $linecount $filename \n");
-			fwrite($processing_status, "Wrong HDR Line Count $HDR->numberOfDetailRecords for $linecount $filename \n");
+			echo "Wrong HDR Line Count HDR:$HDR->numberOfDetailRecords for Actual:$linecount $filename \n";
+			fwrite($errors, "Wrong HDR Line Count HDR:$HDR->numberOfDetailRecords for Actual:$linecount $filename \n");
+			fwrite($processing_status, "Wrong HDR Line Count HDR:$HDR->numberOfDetailRecords for $linecount $filename \n");
+			fwrite($hdrfiles, "$filename HDR:$HDR->numberOfDetailRecords Actual:$linecount\n");
 			$HDR->lineCountIsValid = 0;
 			return 1;			
 		}
@@ -306,18 +308,71 @@ global $filename;
 
 	if(!$DET->isUBRecord()){
 		//set the $input object to contain a $DET row for validation		
-		$input->setData($DET->build_array());
+		
+		$input->setData($DET->build_array($HDR));
+		
 		if($input->isValid()){
 		// after validation is called, the $input object has been updated with the applied Zend Filter classes
 		// these updated fields need to be recorded in the $DET row and stored
 		// this way we are gettign valid/usable data stored in the eiep1 table for analysis
-			switch (get_class($HDR) ){
+			store_clean_detail_record($HDR,$DET,$stmt,$input);
+		} elseif ($input->hasInvalid() || $input->hasMissing()) {
+			//write out invalid line	
+			$messages = $input->getMessages();
+			$invalid_fields = array_keys($messages);
+			// check if the Error is distid or reportmonth first as
+			// these can be taken from the HDR record
+			
+			echo "Error on $input->ICP line: ".count($messages)." fields invalid  \n";
+			fwrite($processing_status ,"Error on $input->ICP line: ".count($messages)." fields invalid  \n");
+			foreach($messages as $key => $value){
+				//$keys = array_keys($messages);
+				echo "Field $key has failed ".count($value)." tests  \n";
+				var_dump($messages);
+				fwrite($processing_status ,"Field $key has failed ".count($value)." tests  \n");
+				if($key == 'reportMonth'){
+					$input->setData(array('reportMonth' => $HDR->reportMonth));
+					if($input->isValid()){
+						store_clean_detail_record($HDR,$DET,$stmt,$input);
+						echo "now it works! \n";
+					}else{
+						var_dump($input->getMessages());
+					}
+					
+				}elseif($key == 'distId'){
+					$input->setData(array('distId' => $HDR->recipent));
+					if($input->isValid()){
+						store_clean_detail_record($HDR,$DET,$stmt,$input);
+						echo "now it works! \n";
+					}else{
+						var_dump($input->getMessages());
+					}
+				}	
+				
+			}				
+			fwrite($errors,"# $filename \n");
+			$HDR->write($errors);
+			$DET->write($errors);
+			
+			fwrite($processing_status ,"# $filename \n");
+			$DET->write($processing_status );	
+			
+		}
+	}else{
+		execute_UB_stmt($HDR,$DET,$stmt);
+	}
+}
+
+function store_clean_detail_record($HDR,$DET,$stmt,$input){
+	
+	switch (get_class($HDR) ){
 			case "EIEP1_HDR" :			
 				$DET->reportPeriodStartDate = implode('-', array_reverse(explode('/', $input->reportPeriodStartDate)));
 				$DET->reportPeriodEndDate = implode('-', array_reverse(explode('/', $input->reportPeriodEndDate)));
 				$DET->tariffRate = $input->tariffRate;
 				$DET->units = $input->units;			
 				$DET->unitType = $input->unitType;	
+				$DET->reportMonth = $input->reportMonth;
 				$DET->networkCharge = $input->networkCharge;
 				$DET->chargeableDays = $input->chargeableDays;								
 				break;
@@ -329,33 +384,10 @@ global $filename;
 				break;			
 			case "LIST_HDR":
 				break;
-			}			
-			execute_stmt($HDR,$DET,$stmt);			
-		} elseif ($input->hasInvalid() || $input->hasMissing()) {
-			//write out invalid line	
-			$messages = $input->getMessages();
-			$invalid_fields = array_keys($messages);
-			echo "Error on $input->ICP line: ".count($messages)." fields invalid  \n";
-			fwrite($processing_status ,"Error on $input->ICP line: ".count($messages)." fields invalid  \n");
-			foreach($messages as $key => $value){
-				//$keys = array_keys($messages);
-				echo "Field $key has failed ".count($value)." tests  \n";
-				var_dump($messages);
-				fwrite($processing_status ,"Field $key has failed ".count($value)." tests  \n");
-			}				
-			fwrite($errors,"# $filename \n");
-			$HDR->write($errors);
-			$DET->write($errors);
-			
-			fwrite($processing_status ,"# $filename \n");
-			$DET->write($processing_status );					
-		}
-	}else{
-		execute_UB_stmt($HDR,$DET,$stmt);
-	}
+			}	
+echo "executing statment \n";			
+			execute_stmt($HDR,$DET,$stmt);
 }
-
-
 function store_header_details($HDR,$filename){
 global $dbh;
 $FILE = new EIEP_Filename(strtoupper(basename($filename)));

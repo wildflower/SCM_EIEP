@@ -12,7 +12,7 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 $errors = fopen('eiep-errors.txt','a');
 $processing_status = fopen('eiep-status.txt','a');
 $timings = fopen('eiep-timings.txt','a');
-
+$hdrfiles = fopen('hdrfiles.txt','a');
 
 $eiep1 = new VALIDATE_EIEP1_DET();       	
 $eiep3 = new VALIDATE_EIEP3_DET();       	
@@ -74,6 +74,7 @@ $filecount++;
 		
 		if(!$HDR->lineCountIsValid)
 		{
+			
 			break 2;		
 		}	
 		
@@ -159,6 +160,7 @@ fwrite ($timings, "$filecount files Done, inserted $count records in $time secon
 fclose($errors);
 fclose($processing_status);
 fclose($timings);
+fclose($hdrfiles);
 $dbh = null;
   // fwrite($out, $lineDetails[1].",".$lineDetails[2].",".$lineDetails[3].",".$lineDetails[4].",".$lineDetails[5].",".$lineDetails[6].",".$lineDetails[7].",".$lineDetails[8].",".$lineDetails[10].",".$lineDetails[11].",".$lineDetails[12].",".$lineDetails[13].",".$lineDetails[14].",".$lineDetails[15].",".$lineDetails[16].",".$lineDetails[17].",".$lineDetails[18].",".$lineDetails[19].",".$lineDetails[20].",".$lineDetails[22].",".$lineDetails[23].",".$lineDetails[24].",".$lineDetails[25].",".$lineDetails[26].",".$lineDetails[27].",".$lineDetails[28].",".$lineDetails[29].",".$lineDetails[30].",".$lineDetails[31].",".$lineDetails[32].",".$lineDetails[33].",".$lineDetails[34].",".$lineDetails[35].",".$lineDetails[36].",".$lineDetails[37].",".$lineDetails[38].",".$lineDetails[39].",".$lineDetails[40].",".$lineDetails[41].",".$lineDetails[42]."\n");
 
