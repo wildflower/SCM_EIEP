@@ -51,9 +51,10 @@ $handle   = fopen($filename, 'r');
 $filecount++;
  
  $delimiter = detectDelimiter($handle);
- //$delimiter = ',';
+ 
  fwrite($processing_status ,"starting $filename with delimiter $delimiter \n");
-
+ echo "starting $filename with delimiter $delimiter \n";
+ $HDR = NULL;
 //echo 'starting loop '.microtime()."\n"; 
 //while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 	while(!feof($handle)) {
@@ -103,22 +104,23 @@ $filecount++;
     
        case 'DET':{
     	//should check startdate and enddate are near reportmonth?
-	  
-		if (strpos(get_class($HDR),'1')){
-			$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
-//var_dump($DET);			
-			do_DET($HDR,$DET,$input_EIEP1,$stmt);
-		}elseif(strpos(get_class($HDR),'3')){
-			$DET = new EIEP3_DET($lineDetails);
-			do_DET($HDR,$DET,$input_EIEP3,$stmt);
+		if (isset($HDR)){
+			if (strpos(get_class($HDR),'1')){
+				$DET = new EIEP1_DET($lineDetails,$HDR->eiepversion);
+				do_DET($HDR,$DET,$input_EIEP1,$stmt);
+			}elseif(strpos(get_class($HDR),'3')){
+				$DET = new EIEP3_DET($lineDetails);
+				do_DET($HDR,$DET,$input_EIEP3,$stmt);
+			}else{
+				$DET = new LIST_DET($lineDetails);
+				do_DET($HDR,$DET,$input_LIST,$stmt);
+			}	
+				$count = $count + 1;	
 		}else{
-			$DET = new LIST_DET($lineDetails);
-			do_DET($HDR,$DET,$input_LIST,$stmt);
+			echo "No HDR record for $filename \n";
+			fwrite($processing_status ,"No HDR record for $filename with delimiter $delimiter \n");
+			continue 3;
 		}
-		
-		
-		$count = $count + 1;	
-
 		} //DET caase
 		
 		

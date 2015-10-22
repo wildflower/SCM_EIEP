@@ -235,7 +235,6 @@ echo "Get (prepare SQL) Statement \n";
 }
 
 function execute_stmt($HDR,$DET,$stmt){
-	
 	switch (get_class($HDR))
 	{
 	case  "EIEP1_HDR":
@@ -277,6 +276,7 @@ function execute_stmt($HDR,$DET,$stmt){
 	}
 	$stmt->execute();
 }
+
 function execute_UB_stmt($HDR,$DET,$stmt){
 	
 	$stmt->bindValue(':fileid',$HDR->fileid);
@@ -329,8 +329,8 @@ global $filename;
 				break;			
 			case "LIST_HDR":
 				break;
-			}
-			execute_stmt($HDR,$DET,$stmt);
+			}			
+			execute_stmt($HDR,$DET,$stmt);			
 		} elseif ($input->hasInvalid() || $input->hasMissing()) {
 			//write out invalid line	
 			$messages = $input->getMessages();
