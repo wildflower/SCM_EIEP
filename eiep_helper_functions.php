@@ -226,12 +226,12 @@ while (($lineDetails = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
 function get_statement($HDR,$dbh){
 echo "Get (prepare SQL) Statement \n";	
 	if (strpos(get_class($HDR),'1')){
-		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer,fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_files,:database_action)");
+		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer, fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
 		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
 	else{
-		$stmt = $dbh->prepare("INSERT INTO $project_table ( icp) VALUES ( :ICP) on duplicate key update icp = :ICP ");			
+		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table ( icp) VALUES ( :ICP) on duplicate key update icp = :ICP ");			
 	}
 	return $stmt;
 }
@@ -281,6 +281,7 @@ function execute_stmt($HDR,$DET,$stmt){
 
 function execute_UB_stmt($HDR,$DET,$stmt){
 	
+	echo " in execute UB $DET->icp, Units $DET->units \n"; 
 	$stmt->bindValue(':fileid',$HDR->fileid);
 	$stmt->bindValue(':ICP', $DET->ICP);
 	$stmt->bindValue(':reportPeriodStartDate', $HDR->reportPeriodStartDate);
@@ -296,7 +297,7 @@ function execute_UB_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':reportMonth',$DET->reportMonth);
 	$stmt->bindValue(':sender',$HDR->sender);	
 	$stmt->bindValue(':fileStatus',$HDR->fileStatus);	
-	$stmt->bindValue(':fk_electra_files',$HDR->fk_files);	
+	$stmt->bindValue(':fk_files',$HDR->fk_files);	
 
 	$stmt->execute();
 }
@@ -359,6 +360,11 @@ global $filename;
 			
 		}
 	}else{
+		$DET->units = 0;
+		$DET->tariffRate = 0;
+		$DET->fixedVariable = 'F';
+		$DET->chargeableDays = 0 ;
+		$DET->networkCharge = 0 ;
 		execute_UB_stmt($HDR,$DET,$stmt);
 	}
 }
