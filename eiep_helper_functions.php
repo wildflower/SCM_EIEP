@@ -60,7 +60,10 @@ echo "Recipient is : $recipient \n" ;
 			break;
 		case 'DUNE':
 			$table = 'aurora_';
-			break;			
+			break;	
+		case 'ALPE':
+			$table = 'alpine_';
+			break;
 		default:
 			$table = 'sunrise_';
 	}
@@ -281,7 +284,6 @@ function execute_stmt($HDR,$DET,$stmt){
 
 function execute_UB_stmt($HDR,$DET,$stmt){
 	
-	echo " in execute UB $DET->icp, Units $DET->units \n"; 
 	$stmt->bindValue(':fileid',$HDR->fileid);
 	$stmt->bindValue(':ICP', $DET->ICP);
 	$stmt->bindValue(':reportPeriodStartDate', $HDR->reportPeriodStartDate);
@@ -289,7 +291,7 @@ function execute_UB_stmt($HDR,$DET,$stmt){
 	$stmt->bindValue(':unitType',$DET->unitType);
 	$stmt->bindValue(':units',$DET->units);
 	$stmt->bindValue(':status',$DET->status);
-	$stmt->bindValue(':tariffCode',$DET->tariffCode);
+	$stmt->bindValue(':tariffCode','UB');
 	$stmt->bindValue(':tariffRate',$DET->tariffRate);
 	$stmt->bindValue(':fixedVariable',$DET->fixedVariable);
 	$stmt->bindValue(':chargeableDays',$DET->chargeableDays);
