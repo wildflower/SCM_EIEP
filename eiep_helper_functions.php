@@ -28,6 +28,8 @@ $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 		$table = 'unison_invoice';
 	}elseif($HDR->filetype == "ICPLIST"){
 		$table = $HDR->project."registry";
+	}elseif($HDR->filetype == "RSICPLIST"){
+		$table = $HDR->project."registry";
 	}
 	else{
 	//$table = get_project($HDR->recipient).$class."_staging";	
@@ -231,7 +233,7 @@ echo "Get (prepare SQL) Statement \n";
 	if (strpos(get_class($HDR),'1')){
 		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, startdate,  enddate,  unittype,  units, status,  pricecode,  pricerate,  fixedvariable,  chargeabledays,  charge, register_code,reportmonth, retailer, fileStatus, fk_$HDR->project_files ,database_action)  VALUES ( :fileid, :ICP, :reportPeriodStartDate, :reportPeriodEndDate,:unitType,:units,:status,:tariffCode,:tariffRate,:fixedVariable,:chargeableDays,:networkCharge,:register_code,:reportMonth,:sender,:fileStatus,:fk_files,:database_action)");
 	}elseif(strpos(get_class($HDR),'3')){
-		$stmt = $dbh->prepare("INSERT INTO $project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
+		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table (fileid, icp, register, readstatus, readdate,  period,  kwh, kvarh, kvah, reportmonth,fileStatus) VALUES ( :fileid, :ICP, :dataStreamIdentifier, :status, :date, :tradingPeriod, :consumption, :reactiveEnergy, :apparentEnergy, :reportMonth,:fileStatus)");			
 	}
 	else{
 		$stmt = $dbh->prepare("INSERT INTO $HDR->project_table ( icp) VALUES ( :ICP) on duplicate key update icp = :ICP ");			
@@ -426,7 +428,9 @@ $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':islinecountvalid',$HDR->lineCountIsValid); 
 	$stmt->bindValue(':eiepversion',$HDR->eiepversion); 
 //var_dump($stmt);
+ $dbh->beginTransaction();
 $stmt->execute();	
+ $dbh->commit();
 //print_r($stmt->errorInfo());
 //print_r( $stmt->errorCode());
 //echo "\n";

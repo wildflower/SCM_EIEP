@@ -15,6 +15,10 @@ class LIST_HDR
     var $numberOfDetailRecords;
     var $fileStatus;
     var $fk_files;
+	var $eiepversion;
+	var $project;
+	var $project_files;
+	var $project_table ;
     
     function build_array()
     {
@@ -25,8 +29,10 @@ class LIST_HDR
             "date" => $this->date,
             "time" => $this->time,            
             "numberOfDetailRecords" => $this->numberOfDetailRecords,
-	    "filestatus" => $this->fileStatus,
-	    "fk_files" => $this->fk_files
+			"filestatus" => $this->fileStatus,
+			"fk_files" => $this->fk_files,
+			"eiepversion" => $this->eiepversion
+			
         );
     }
     
@@ -38,7 +44,11 @@ class LIST_HDR
         $this->date         = $lineDetails[4];
         $this->time         = $lineDetails[5];
         $this->numberOfDetailRecords            = $lineDetails[6];
-	$this->fileStatus = "I";
+		$this->fileStatus = "I";
+		$this->eiepversion = 10;
+		$this->project	= get_project($this->recipient);
+		$this->project_files = $this->project."files";
+		$this->project_table = get_project_table($this);
     }
     
     function validate()

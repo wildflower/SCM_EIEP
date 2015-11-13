@@ -73,8 +73,7 @@ $filecount++;
 		fwrite($processing_status ,"After validate line count \n");			    
 		
 		if(!$HDR->lineCountIsValid)
-		{
-			
+		{			
 			break 2;		
 		}	
 		
@@ -99,6 +98,8 @@ $filecount++;
 		//prepare the insert statement for the type of DET lines to follow
 		$HDR->fk_files = store_header_details($HDR,$filename);
 		$stmt = get_statement($HDR,$dbh);
+		// start transaction to store DET records 
+		$dbh->beginTransaction();
 		fwrite($processing_status ,"Statment received  \n");			    
 	break;
 	}
@@ -126,9 +127,11 @@ $filecount++;
 		
 		
 	} //Switch
+	
 } //While
 
-
+//commit the written DET records - this might commit an empty cache becuase the file was invalied and didn't have any DET records?
+	$dbh->commit();
 fclose($handle);
 // move finished files out the way - might be moving X and R files
 
