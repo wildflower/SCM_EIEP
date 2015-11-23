@@ -428,9 +428,9 @@ $stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':islinecountvalid',$HDR->lineCountIsValid); 
 	$stmt->bindValue(':eiepversion',$HDR->eiepversion); 
 //var_dump($stmt);
- $dbh->beginTransaction();
+
 $stmt->execute();	
- $dbh->commit();
+
 //print_r($stmt->errorInfo());
 //print_r( $stmt->errorCode());
 //echo "\n";
