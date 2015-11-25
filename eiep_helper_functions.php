@@ -20,7 +20,7 @@ function detectDelimiter($handle) {
 
 function get_project_table($HDR){
 // return eiep1 or eiep3
-echo "Project table \n";
+//echo "Project table \n";
 $class = stristr(strtolower(get_class($HDR)),'_',TRUE);
 
 	if ( $HDR->sender == "HAWK" && ($HDR->recipient == "MERI" ||  $HDR->recipient == "PUNZ"))
@@ -39,7 +39,7 @@ return $table;
 }
 
 function get_project($recipient){
-echo "Recipient is : $recipient \n" ;
+//echo "Recipient is : $recipient \n" ;
 
 	switch($recipient){
 		case 'HEDL':
