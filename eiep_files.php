@@ -548,7 +548,7 @@ class EIEP1_DET
 		$this->busName               = $lineDetails[8]; // GXP
 		$this->distId                = $lineDetails[9]; // Participant Id retailer
 		$this->spare                 = $lineDetails[10];
-		$this->tariffCode            = $lineDetails[11];
+		$this->tariffCode            = $lineDetails[11]; //pricecode
 		$this->tariffRate            = $lineDetails[12];
 		$this->fixedVariable         = $lineDetails[13];
 		$this->chargeableDays        = $lineDetails[14];

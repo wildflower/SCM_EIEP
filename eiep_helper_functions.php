@@ -112,6 +112,8 @@ global $delimiter;
 global $hdrfiles;
 $linecounthandle   = fopen($filename, 'r');
 $linecount = 0;
+//use file(filename); and count the array elements +1 for the HDR then unset the values to free memory
+
 	while (($linecountdetails = fgetcsv($linecounthandle, 1000, $delimiter)) !== FALSE) {
 			if (strtoupper($linecountdetails [0]) == 'DET'){
 				$linecount++;
