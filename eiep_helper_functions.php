@@ -312,8 +312,9 @@ function do_DET($HDR,$DET,$input,$stmt){
 global  $processing_status;
 global $errors;
 global $filename;
+global $validate;
 
-	if(!$DET->isUBRecord()){
+	if(!$DET->isUBRecord() && ($validate == true)){
 		//set the $input object to contain a $DET row for validation		
 		
 		$input->setData($DET->build_array($HDR));
@@ -365,13 +366,17 @@ global $filename;
 			$DET->write($processing_status );	
 			
 		}
-	}else{
+	}elseif($DET->isUBRecord() == true){
 		$DET->units = 0;
 		$DET->tariffRate = 0;
 		$DET->fixedVariable = 'F';
 		$DET->chargeableDays = 0 ;
 		$DET->networkCharge = 0 ;
 		execute_UB_stmt($HDR,$DET,$stmt);
+	}elseif($validate == false){
+		//just bung it in
+		//maybe it's all the filters slowing it down		
+		
 	}
 }
 

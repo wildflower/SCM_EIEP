@@ -56,7 +56,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $project_table where icp in ('0000000367CE3CB','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
+	$query = "select icp from $project_table where icp in ('0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -82,7 +82,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     fwrite($errors, "Getting ICP : $target_icp->icpId ".date('Y-m-d')." \n");
     $target_result = $client->icpDetails_v1($target_icp);
     //print_r($target_result);
-    //echo "Response:\n" . $client->__getLastResponse() . "\n";
+    echo "Response:\n" . $client->__getLastResponse() . "\n";
     //var_dump($target_result);
     //exit();
     //echo "here";
@@ -179,7 +179,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     
     $update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
     $update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
-    
+    echo '$update_record->submissionTypeNHH is '.$update_record->submissionTypeNHH;
     $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
     $update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
     $update_record->unmflag           = $target_result->icpDetails_v1Result->myTraderHistory->unmFlag;

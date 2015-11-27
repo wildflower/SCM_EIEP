@@ -41,6 +41,12 @@ if(isset($_GET['HDR'])){
 	$path = $hdrfile;
 }
 
+$validate = true;
+if(isset($_GET['validate'])){
+	// this is to skip the validation of each DET record, should speed up heaps
+	$validate = $_GET['validate'];	
+}
+
 echo "Starting to process ". count($files)." files matching $path \n";
 fwrite($processing_status,"Starting to process ". count($files)." files matching $path \n");
 
