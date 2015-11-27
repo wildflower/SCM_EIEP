@@ -137,7 +137,10 @@ $filecount++;
 } //While
 
 //commit the written DET records - this might commit an empty cache becuase the file was invalied and didn't have any DET records?
-	$dbh->commit();
+if (($HDR->fileStatus != 'R') and ($HDR->fileStatus != 'X')){	
+	$dbh->commit();	
+}
+
 fclose($handle);
 // move finished files out the way - might be moving X and R files
 
