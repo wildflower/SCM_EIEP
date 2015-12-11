@@ -137,7 +137,7 @@ $filecount++;
 } //While
 
 //commit the written DET records - this might commit an empty cache becuase the file was invalid and didn't have any DET records?
-if (($HDR->fileStatus != 'R') and ($HDR->fileStatus != 'X')){	
+if (($HDR->fileStatus != 'R') and ($HDR->fileStatus != 'X') and ($HDR->lineCountIsValid)){	
 	$dbh->commit();	
 }
 
