@@ -182,60 +182,59 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         $update_record->chargeablecapacity = $target_result->icpDetails_v1Result->myPricingHistory->chargeableCapacity;
         $update_record->reference          = $target_result->icpDetails_v1Result->myPricingHistory->userRef;
     }
-    try{
-		$update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
-	}catch (Exception $e) {
+	if (isset($target_result->icpDetails_v1Result->myTraderHistory)){
+		try{
+			$update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
+		}catch (Exception $e) {
 			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory->submissionTypeHHR \n";
 			echo "Response:\n" . $client->__getLastResponse() . "\n";
-	}
-	try{
-		$update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
-	}catch (Exception $e){
+		}
+		try{
+			$update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
+		}catch (Exception $e){
 			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory -> submissionTypeNHH \n";
 			echo "Response:\n" . $client->__getLastResponse() . "\n";
-	}
+		}
 	//  echo '$update_record->submissionTypeNHH is '." $update_record->submissionTypeNHH ";
 	//	echo '$update_record->submissionTypeHHR is '." $update_record->submissionTypeHHR ";
-    $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
-    $update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
-    $update_record->unmflag           = $target_result->icpDetails_v1Result->myTraderHistory->unmFlag;
-	if ($update_record->unmflag == false){
-		$update_record->dailyunmeteredkwh = 0;
-	}
-	else{
-		$update_record->dailyunmeteredkwh = $target_result->icpDetails_v1Result->myTraderHistory->dailyUnmeteredkWh;
+		$update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
+		$update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
+		$update_record->unmflag           = $target_result->icpDetails_v1Result->myTraderHistory->unmFlag;
+		if ($update_record->unmflag == false){
+			$update_record->dailyunmeteredkwh = 0;
+		}else{
+			$update_record->dailyunmeteredkwh = $target_result->icpDetails_v1Result->myTraderHistory->dailyUnmeteredkWh;
+		}
+	
+		$update_record->anzsic            = $target_result->icpDetails_v1Result->myTraderHistory->vANZSICcode;
+     
+		$update_record->reconciliationauditnumber   = $target_result->icpDetails_v1Result->myTraderHistory->currentAuditNumber;
+		$update_record->reconciliationuserreference = $target_result->icpDetails_v1Result->myTraderHistory->userRef;
+		$update_record->retailer                    = $target_result->icpDetails_v1Result->myTraderHistory->myRetailer->code;
+	//if allProfiles xsi:nil="true"
+		if( isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles)){
+		
+		if (isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode))
+			$update_record->profile = $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode;
+		else {
+			$profile = "";
+			try{
+				for ($l = 0; $l < count($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile); $l++) {
+					$profile = $profile . $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile[$l]->myProfile->profileCode . " ";
+				}
+				$update_record->profile = $profile;
+			}catch  (Exception $e) {
+				echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory -> allProfiles -> RetailerProfile \n";
+				echo "Response:\n" . $client->__getLastResponse() . "\n";
+			}
+			//	echo "Profile is $profile. \n";
+		}
+		}else{
+			echo "there are no Profiles \n"; 
+			$update_record->profile = NULL;			
+		}
 	}
 	
-    $update_record->anzsic            = $target_result->icpDetails_v1Result->myTraderHistory->vANZSICcode;
-    
-    
-    $update_record->reconciliationauditnumber   = $target_result->icpDetails_v1Result->myTraderHistory->currentAuditNumber;
-    $update_record->reconciliationuserreference = $target_result->icpDetails_v1Result->myTraderHistory->userRef;
-    $update_record->retailer                    = $target_result->icpDetails_v1Result->myTraderHistory->myRetailer->code;
-	//if allProfiles xsi:nil="true"
-	if( isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles)){
-    
-    if (isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode))
-        $update_record->profile = $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode;
-    else {
-        $profile = "";
-		try{
-			for ($l = 0; $l < count($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile); $l++) {
-				$profile = $profile . $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile[$l]->myProfile->profileCode . " ";
-			}
-			$update_record->profile = $profile;
-		}catch  (Exception $e) {
-			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory -> allProfiles -> RetailerProfile \n";
-			echo "Response:\n" . $client->__getLastResponse() . "\n";
-		}
-        //	echo "Profile is $profile. \n";
-    }
-	}else{
-		echo "there are no Profiles \n"; 
-		$update_record->profile = NULL;
-		
-	}
-		
     if(isset($target_result->icpDetails_v1Result->myMeteringHistory)){
 		try{
 			$update_record->meteringaudit   = $target_result->icpDetails_v1Result->myMeteringHistory->currentAuditNumber;

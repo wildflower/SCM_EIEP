@@ -51,9 +51,6 @@ $updateChannel = new icpChannel();
 					$updateChannel->AccumulatorType = 0;
 				}
 				
-				
-				
-				
 				$updateChannel->SettlementIndicator = $path->settlementIndicator;
 				$updateChannel->EventReading =$path->eventReading;
 				

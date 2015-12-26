@@ -112,6 +112,7 @@ public $EnergyFlowDirection;
 public $AccumulatorType;
 public $SettlementIndicator;
 public $EventReading;
+public $GenericPricecode;
 	}
 	
 class icpComponent	
