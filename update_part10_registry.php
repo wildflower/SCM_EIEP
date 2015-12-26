@@ -34,7 +34,7 @@ $errors = fopen('registry_updates.txt', 'a');
 
 $count = 0;
  
-$dsn     = 'mysql:host=localhost;dbname=scm';
+
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
 );
@@ -182,9 +182,18 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         $update_record->chargeablecapacity = $target_result->icpDetails_v1Result->myPricingHistory->chargeableCapacity;
         $update_record->reference          = $target_result->icpDetails_v1Result->myPricingHistory->userRef;
     }
-    
-    $update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
-    $update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
+    try{
+		$update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
+	}catch (Exception $e) {
+			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory->submissionTypeHHR \n";
+			echo "Response:\n" . $client->__getLastResponse() . "\n";
+	}
+	try{
+		$update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
+	}catch (Exception $e){
+			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory -> submissionTypeNHH \n";
+			echo "Response:\n" . $client->__getLastResponse() . "\n";
+	}
 	//  echo '$update_record->submissionTypeNHH is '." $update_record->submissionTypeNHH ";
 	//	echo '$update_record->submissionTypeHHR is '." $update_record->submissionTypeHHR ";
     $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
