@@ -5,7 +5,9 @@ class ftl_project
 	public $metering_table;
 	public $metering_view;
 	public $project_table;
-
+	public $installation;
+	public $component;
+	public $channel;
 	
 	function __construct($name)
     {
@@ -13,6 +15,9 @@ class ftl_project
 		$this->project_table = $this->project_name.'_registry';
 		$this->metering_view = 'vw_metering_info_'.$this->project_name;
 		$this->metering_table = $this->project_name.'_mat_metering_info_';
+		$this->installation  = $this->project_name.'_metering_installation';
+		$this->component = $this->project_name.'_metering_component';
+		$this->channel = $this->project_name.'_metering_channel';
 	}
 }
 

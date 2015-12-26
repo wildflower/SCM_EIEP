@@ -53,14 +53,15 @@ $updateChannel = new icpChannel();
 				
 				$updateChannel->SettlementIndicator = $path->settlementIndicator;
 				$updateChannel->EventReading =$path->eventReading;
+				$updateChannel->GenericPricecode = $updateChannel->RegisterContentCode.$updateChannel->PeriodofAvailability;
 				
 return $updateChannel;			
 }
 
 function set_installation_query($updateInstallation,$dbh){
-global $project;
-$installation = $project.'_metering_installation';
-$query = "INSERT INTO  $installation
+global $Project;
+
+$query = "INSERT INTO  $Project->installation
 			(icp,MeteringInstallationNumber,HighestMeteringCategory,MeteringInstallationLocationCode ,ATHParticipantIdentifier,MeteringInstallationType,MeteringInstallationCertificationType,MeteringInstallationCertificationDate,MeteringInstallationCertificationExpiryDate,ControlDeviceCertificationFlag,CertificationVariations ,CertificationVariationsExpiryDate ,CertificationNumber,MaximumInterrogationCycle,LeasePriceCode,NumberOfComponentRecords)
 			values (
 			:icp,:MeteringInstallationNumber,:HighestMeteringCategory,:MeteringInstallationLocationCode,:ATHParticipantIdentifier,:MeteringInstallationType,:MeteringInstallationCertificationType,:MeteringInstallationCertificationDate,:MeteringInstallationCertificationExpiryDate,:ControlDeviceCertificationFlag,:CertificationVariations,:CertificationVariationsExpiryDate,:CertificationNumber,:MaximumInterrogationCycle,:LeasePriceCode ,:NumberOfComponentRecords
@@ -105,12 +106,10 @@ $stmt->execute();
 
 }
 	 
-	 function set_component_query($updateComponent,$dbh){
-global $project;
-$component = $project.'_metering_component';
-
+function set_component_query($updateComponent,$dbh){
+global $Project;
 			
-$query = "INSERT INTO $component
+$query = "INSERT INTO $Project->component
 			(icp,MeteringInstallationNumber,MeteringComponentSerialNumber,MeteringComponentType ,MeterType ,AMIFlag,MeteringInstallationCategory,CompensationFactor, Owner,NumberOfChannelRecords)
 			values (:icp,:MeteringInstallationNumber,:MeteringComponentSerialNumber,:MeteringComponentType,:MeterType,:AMIFlag,:MeteringInstallationCategory,:CompensationFactor,:Owner,:NumberOfChannelRecords) on duplicate key update 
 			MeteringComponentType=values(MeteringComponentType),
@@ -138,14 +137,11 @@ $query = "INSERT INTO $component
 }
 
 function set_channel_query($updateChannel ,$dbh){
-global $project;
+global $Project;
 
-$channel = $project.'_metering_channel';
-
-			
-			$query = "INSERT INTO  $channel
-				(icp,MeteringInstallationNumber,MeteringComponentSerialNumber,ChannelNumber ,NumberofDials ,RegisterContentCode,PeriodofAvailability,UnitofMeasurement,EnergyFlowDirection,AccumulatorType,SettlementIndicator ,EventReading)
-				values (:icp,:MeteringInstallationNumber,:MeteringComponentSerialNumber,:ChannelNumber,:NumberofDials,:RegisterContentCode,:PeriodofAvailability,:UnitofMeasurement,:EnergyFlowDirection,:AccumulatorType,:SettlementIndicator,:EventReading) on duplicate key update 
+			$query = "INSERT INTO  $Project->channel
+				(icp,MeteringInstallationNumber,MeteringComponentSerialNumber,ChannelNumber ,NumberofDials ,RegisterContentCode,PeriodofAvailability,UnitofMeasurement,EnergyFlowDirection,AccumulatorType,SettlementIndicator ,EventReading,Generic_pricecode)
+				values (:icp,:MeteringInstallationNumber,:MeteringComponentSerialNumber,:ChannelNumber,:NumberofDials,:RegisterContentCode,:PeriodofAvailability,:UnitofMeasurement,:EnergyFlowDirection,:AccumulatorType,:SettlementIndicator,:EventReading,:GenericPricecode) on duplicate key update 
 				NumberofDials=values(NumberofDials),
 				RegisterContentCode=values(RegisterContentCode),
 				PeriodofAvailability=values(PeriodofAvailability),
@@ -153,7 +149,9 @@ $channel = $project.'_metering_channel';
 				EnergyFlowDirection=values(EnergyFlowDirection),
 				AccumulatorType=values(AccumulatorType),
 				SettlementIndicator=values(SettlementIndicator),
-				EventReading=values(EventReading)";
+				EventReading=values(EventReading),
+				Generic_pricecode=values(Generic_pricecode)";
+				
 $stmt = $dbh->prepare($query);
 				$stmt->bindValue(':icp',$updateChannel->icp);
 				$stmt->bindValue(':MeteringInstallationNumber',$updateChannel->MeteringInstallationNumber);
@@ -167,6 +165,7 @@ $stmt = $dbh->prepare($query);
 				$stmt->bindValue(':AccumulatorType',$updateChannel->AccumulatorType);
 				$stmt->bindValue(':SettlementIndicator', $updateChannel->SettlementIndicator);
 				$stmt->bindValue(':EventReading',$updateChannel->EventReading);
+				$stmt->bindValue(':GenericPricecode',$updateChannel->GenericPricecode);
 				
 				$stmt->execute();
 				
