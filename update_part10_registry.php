@@ -34,7 +34,7 @@ $errors = fopen('registry_updates.txt', 'a');
 
 $count = 0;
  
-$dsn     = 'mysql:host=127.0.0.1;dbname=scm';
+$dsn     = 'mysql:host=localhost;dbname=scm';
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
 );
