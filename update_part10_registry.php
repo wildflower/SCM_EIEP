@@ -59,7 +59,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $Project->project_table where icp in ('0001311335ALC5A','0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
+	$query = "select icp from $Project->project_table where icp in ('0001832612AL528', '0001311335ALC5A','0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -227,24 +227,28 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 		
 	}
 		
-    
-    
-    $update_record->meteringaudit   = $target_result->icpDetails_v1Result->myMeteringHistory->currentAuditNumber;
-    $update_record->meteruserref    = $target_result->icpDetails_v1Result->myMeteringHistory->userRef;
-    $update_record->metercontact    = $target_result->icpDetails_v1Result->myMeteringHistory->userId;
-    $update_record->category        = $target_result->icpDetails_v1Result->myMeteringHistory->highestMeteringCategory;
-    $update_record->metertypehhr    = $target_result->icpDetails_v1Result->myMeteringHistory->hhrFlag;
-    $update_record->metertypenhh    = $target_result->icpDetails_v1Result->myMeteringHistory->nhhFlag;
-    $update_record->metertypepp     = $target_result->icpDetails_v1Result->myMeteringHistory->ppFlag;
+    if(isset($target_result->icpDetails_v1Result->myMeteringHistory)){
+		try{
+			$update_record->meteringaudit   = $target_result->icpDetails_v1Result->myMeteringHistory->currentAuditNumber;
+		}catch (Exception $e) {
+			echo $e->getLine()." - can't find icpDetails_v1Result ->myMeteringHistory->currentAuditNumber \n";
+			echo "Response:\n" . $client->__getLastResponse() . "\n";
+		}
+		$update_record->meteruserref    = $target_result->icpDetails_v1Result->myMeteringHistory->userRef;
+		$update_record->metercontact    = $target_result->icpDetails_v1Result->myMeteringHistory->userId;
+		$update_record->category        = $target_result->icpDetails_v1Result->myMeteringHistory->highestMeteringCategory;
+		$update_record->metertypehhr    = $target_result->icpDetails_v1Result->myMeteringHistory->hhrFlag;
+		$update_record->metertypenhh    = $target_result->icpDetails_v1Result->myMeteringHistory->nhhFlag;
+		$update_record->metertypepp     = $target_result->icpDetails_v1Result->myMeteringHistory->ppFlag;
     //$update_record->metertypeunm  = $target_result->icpDetails_v1Result->myMeteringHistory->meterTypeUNM;
-    $update_record->ami             = $target_result->icpDetails_v1Result->myMeteringHistory->amiFlag;
+		$update_record->ami             = $target_result->icpDetails_v1Result->myMeteringHistory->amiFlag;
     //$update_record->dailyunmeteredkwh  = $target_result->icpDetails_v1Result->myMeteringHistory->dailyUnmeteredkWh//;
     //$update_record->unmeteredretailer  = mysql_real_escape_string($target_result->icpDetails_v1Result->myMeteringHistory->unmeteredLoadRetailer);
-    $update_record->meterregister   = $target_result->icpDetails_v1Result->myMeteringHistory->meterRegisterCount;
-    $update_record->metermultiplier = $target_result->icpDetails_v1Result->myMeteringHistory->meterMultiplierFlag;
+		$update_record->meterregister   = $target_result->icpDetails_v1Result->myMeteringHistory->meterRegisterCount;
+		$update_record->metermultiplier = $target_result->icpDetails_v1Result->myMeteringHistory->meterMultiplierFlag;
     
-    if ($target_result->icpDetails_v1Result->myMeteringHistory->vNumberOfInstallations == 1) {
-        for ($i = 0; $i < count($target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation); $i++) {
+		if ($target_result->icpDetails_v1Result->myMeteringHistory->vNumberOfInstallations == 1) {
+			for ($i = 0; $i < count($target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation); $i++) {
             $updateInstallation                                              = new icpInstallation();
             $updateInstallation->icp                                         = $target_result->icpDetails_v1Result->myIcp->icpId;
             $updateInstallation->MeteringInstallationNumber                  = $target_result->icpDetails_v1Result->myMeteringHistory->allMeteringInstallations->MeteringInstallation->installationNumber;
@@ -325,6 +329,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             }
         }
     }
+	}
     
     $update_record->statusaudit     = $target_result->icpDetails_v1Result->myStatusHistory->currentAuditNumber;
     $update_record->statususerref   = $target_result->icpDetails_v1Result->myStatusHistory->userRef;
@@ -403,7 +408,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     
     
     
-    echo " before execute \n";	
+   // echo " before execute \n";	
     //$stmt->debugDumpParams();
     try{
 		$stmt->execute();
