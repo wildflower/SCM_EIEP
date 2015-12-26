@@ -177,8 +177,12 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $update_record->distpricecat = $distpricecat;
             echo "Distpricecat is $distpricecat. \n";
         }
-        
-        $update_record->distlosscat        = $target_result->icpDetails_v1Result->myPricingHistory->myLossFactorCode->code;
+        try{
+			$update_record->distlosscat        = $target_result->icpDetails_v1Result->myPricingHistory->myLossFactorCode->code;
+		}catch(Exception $e){
+			echo $e->getLine()." - can't find icpDetails_v1Result -> myPricingHistory->myLossFactorCode->code \n";
+			echo "Response:\n" . $client->__getLastResponse() . "\n";
+		}
         $update_record->chargeablecapacity = $target_result->icpDetails_v1Result->myPricingHistory->chargeableCapacity;
         $update_record->reference          = $target_result->icpDetails_v1Result->myPricingHistory->userRef;
     }

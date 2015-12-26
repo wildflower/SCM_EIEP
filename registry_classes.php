@@ -20,6 +20,45 @@ class ftl_project
 		$this->channel = $this->project_name.'_metering_channel';
 	}
 }
+class icpEvents
+{ 
+	public $icpId;
+	public $userName;
+	public $password;
+	public $includeReversed;
+	public $includeSwitch;
+	public $includeRecon;
+	public $includeNetwork;
+	public $includePricing;
+	public $includeStatus;
+	public $includeAddress;
+	public $includeMeter;
+	
+	function __construct()
+    {
+		$this->includeReversed = "1";
+		$this->includeSwitch = "1";
+		$this->includeRecon = "1";
+		$this->includeTrader = "1";
+		$this->includePricing = "1";
+		$this->includeStatus = "1";
+		$this->includeAddress = "1";
+		$this->includeMeter = "1";
+		$this->includeNetwork = "1";
+	}
+}
+
+class scmEvent
+{
+	public $icp;
+	public $creationDate;
+	public $eventDataSummary;
+	public $eventDate;
+	public $eventType;
+	public $isReplaced;
+	public $isReversed;
+	public $reverseReplaceDate;	
+}
 
 class icpDetails
 {	public $icpId;
@@ -153,35 +192,5 @@ public $MeteringInstallationLocationCode;
  public $LeasePriceCode;
  public $NumberOfComponentRecords;
 }
-
-
-class icpEvents
-{ 
-	public $icpId;
-	public $userName;
-	public $password;
-	public $includeReversed;
-	public $includeSwitch;
-	public $includeRecon;
-	public $includeNetwork;
-	public $includePricing;
-	public $includeStatus;
-	public $includeAddress;
-	public $includeMeter;
-}
-
-class scmEvent
-{
-	public $icp;
-	public $creationDate;
-	public $eventDataSummary;
-	public $eventDate;
-	public $eventType;
-	public $isReplaced;
-	public $isReversed;
-	public $reverseReplaceDate;	
-}
- 
-
 ?>
 
