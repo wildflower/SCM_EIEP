@@ -59,7 +59,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $Project->project_table where icp in ('0001832612AL528', '0001311335ALC5A','0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
+	$query = "select icp from $Project->project_table where icp in ('0001050826ALFB8' ,'0001931079AL486' ) ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
