@@ -16,16 +16,19 @@ $wsdl       = "https://www.electricityregistry.co.nz/bin_public/Jadehttp.dll?Web
 $client     = new SoapClient($wsdl, array(
     'trace' => 1
 ));
+
 if(isset($_GET['project'])){
 	$project = $_GET['project'];
 }else
 {
-	$project = 'electra';
+	echo "I need a project Name \n";
+	exit;
 }
+$Project = new ftl_project($project);
 
-$project_table = $project.'_registry';
 
-echo "Working with $project_table \n";
+
+echo "Working with $Project->project_table \n";
 
 $errors = fopen('registry_updates.txt', 'a');
 
@@ -50,13 +53,13 @@ include 'statements.php';
 
 //$query = 'select "0000339010EL523"  from dual';
 if ($dataset == 'all') {
-    $query = "select icp from $project_table ";
+    $query = "select icp from $Project->project_table ";
 } elseif ($dataset == 'icpincident') {
     $query = "select distinct icp from icpincident";
 } elseif ($dataset == 'new'){
-	$query = "select icp from $project_table where icpcreationdate is null";
+	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $project_table where icp in ('0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
+	$query = "select icp from $Project->project_table where icp in ('0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -82,7 +85,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     fwrite($errors, "Getting ICP : $target_icp->icpId ".date('Y-m-d')." \n");
     $target_result = $client->icpDetails_v1($target_icp);
     //print_r($target_result);
-    echo "Response:\n" . $client->__getLastResponse() . "\n";
+  //  echo "Response:\n" . $client->__getLastResponse() . "\n";
     //var_dump($target_result);
     //exit();
     //echo "here";
@@ -102,6 +105,9 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $update_record->switchInProgressMEP = $target_result->icpDetails_v1Result->myIcp->switchInProgressMEP;
     if (isset($target_result->icpDetails_v1Result->myAddressHistory)) {
         $update_record->addressaudit    = $target_result->icpDetails_v1Result->myAddressHistory->currentAuditNumber;
+		if (isset($target_result->icpDetails_v1Result->myAddressHistory->propertyName)){
+			$update_record->propertyname     = $target_result->icpDetails_v1Result->myAddressHistory->propertyName;
+		}
         $update_record->addressunit     = $target_result->icpDetails_v1Result->myAddressHistory->unit;
         $update_record->addressnumber   = $target_result->icpDetails_v1Result->myAddressHistory->number;
         $update_record->addressregion   = $target_result->icpDetails_v1Result->myAddressHistory->vRegion;
@@ -179,7 +185,8 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     
     $update_record->submissionTypeHHR       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeHHR;
     $update_record->submissionTypeNHH       = $target_result->icpDetails_v1Result->myTraderHistory->submissionTypeNHH;
-    echo '$update_record->submissionTypeNHH is '.$update_record->submissionTypeNHH;
+	//  echo '$update_record->submissionTypeNHH is '." $update_record->submissionTypeNHH ";
+	//	echo '$update_record->submissionTypeHHR is '." $update_record->submissionTypeHHR ";
     $update_record->proposedmep       = $target_result->icpDetails_v1Result->myTraderHistory->vProposedMEPidentifier;
     $update_record->unmloadtrader     = $target_result->icpDetails_v1Result->myTraderHistory->unmeteredLoadTrader;
     $update_record->unmflag           = $target_result->icpDetails_v1Result->myTraderHistory->unmFlag;
@@ -201,10 +208,15 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         $update_record->profile = $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode;
     else {
         $profile = "";
-        for ($l = 0; $l < count($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile); $l++) {
-            $profile = $profile . $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile[$l]->myProfile->profileCode . " ";
-        }
-        $update_record->profile = $profile;
+		try{
+			for ($l = 0; $l < count($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile); $l++) {
+				$profile = $profile . $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile[$l]->myProfile->profileCode . " ";
+			}
+			$update_record->profile = $profile;
+		}catch  (Exception $e) {
+			echo "line 211 happened\n";
+			echo "Response:\n" . $client->__getLastResponse() . "\n";
+		}
         //	echo "Profile is $profile. \n";
     }
     
@@ -379,22 +391,30 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $stmt->bindValue(':installdetails', $update_record->installdetails);
     $stmt->bindValue(':submissionTypeNHH', $update_record->submissionTypeNHH);
     $stmt->bindValue(':submissionTypeHHR', $update_record->submissionTypeHHR);
+	$stmt->bindValue(':propertyname', $update_record->propertyname);
     
     
     
-    //echo " before execute \n";	
+    echo " before execute \n";	
     //$stmt->debugDumpParams();
-    $stmt->execute();
-    //	$arr = $stmt->errorInfo();
-    //print_r($arr);
+    try{
+		$stmt->execute();
+	}
+	catch(Exception $e) {
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
+	$arr = $stmt->errorInfo();
+    print_r($arr);
+}
+    
     //$result = $stmt->fetchAll();
     //	echo " after execute \n ";	
     //var_dump($result);
     $count++;
 }
+// Need to call different procedures or reference the different project views to load the project specific table
+//$newmetering = $dbh->exec($metering_update );
+//echo "$newmetering rows updated by Joe's code \n";
 
-$newmetering = $dbh->exec($metering_update );
-echo "$newmetering rows updated by Joe's code \n";
 $end_time = time();
 $time     = $end_time - $start_time;
 echo "$count ICPs updated  in $time seconds \n";

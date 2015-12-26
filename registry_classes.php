@@ -1,4 +1,20 @@
 <?php
+class ftl_project
+{
+	public $project_name;
+	public $metering_table;
+	public $metering_view;
+	public $project_table;
+
+	
+	function __construct($name)
+    {
+        $this->project_name = $name;
+		$this->project_table = $this->project_name.'_registry';
+		$this->metering_view = 'vw_metering_info_'.$this->project_name;
+		$this->metering_table = $this->project_name.'_mat_metering_info_';
+	}
+}
 
 class icpDetails
 {	public $icpId;
@@ -49,6 +65,7 @@ class icpRegistry
   public $icpstatusreason;
   public $statususerref;
   public $addressaudit;
+  public $propertyname;
   public $addressunit;
   public $addressnumber;
   public $addressregion;
