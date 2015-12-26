@@ -59,7 +59,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $Project->project_table where icp in ('0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
+	$query = "select icp from $Project->project_table where icp in ('0001311335ALC5A','0001010026AL420','0000000592CE895','0000001273CE0C8','0000001746CEF7A','0000203551DE799','0000203576DE706') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -203,6 +203,8 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $update_record->reconciliationauditnumber   = $target_result->icpDetails_v1Result->myTraderHistory->currentAuditNumber;
     $update_record->reconciliationuserreference = $target_result->icpDetails_v1Result->myTraderHistory->userRef;
     $update_record->retailer                    = $target_result->icpDetails_v1Result->myTraderHistory->myRetailer->code;
+	//if allProfiles xsi:nil="true"
+	if( isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles)){
     
     if (isset($target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode))
         $update_record->profile = $target_result->icpDetails_v1Result->myTraderHistory->allProfiles->RetailerProfile->myProfile->profileCode;
@@ -214,11 +216,17 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 			}
 			$update_record->profile = $profile;
 		}catch  (Exception $e) {
-			echo "line 211 happened\n";
+			echo $e->getLine()." - can't find icpDetails_v1Result -> myTraderHistory -> allProfiles -> RetailerProfile \n";
 			echo "Response:\n" . $client->__getLastResponse() . "\n";
 		}
         //	echo "Profile is $profile. \n";
     }
+	}else{
+		echo "there are no Profiles \n"; 
+		$update_record->profile = NULL;
+		
+	}
+		
     
     
     $update_record->meteringaudit   = $target_result->icpDetails_v1Result->myMeteringHistory->currentAuditNumber;
