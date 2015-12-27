@@ -171,11 +171,16 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $update_record->distpricecat = $target_result->icpDetails_v1Result->myPricingHistory->allPriceCategoryCodes->PriceCategoryCode->code;
         else {
             $distpricecat = "";
+			try {
             for ($m = 0; $m < count($target_result->icpDetails_v1Result->myPricingHistory->allPriceCategoryCodes->PriceCategoryCode); $m++) {
                 $distpricecat = $distpricecat . $target_result->icpDetails_v1Result->myPricingHistory->allPriceCategoryCodes->PriceCategoryCode[$m]->code . " ";
             }
             $update_record->distpricecat = $distpricecat;
             echo "Distpricecat is $distpricecat. \n";
+			}catch(Exception $e){
+				echo $e->getLine()." - can't find icpDetails_v1Result -> myPricingHistory->allPriceCategoryCodes->PriceCategoryCode \n";
+				echo "Response:\n" . $client->__getLastResponse() . "\n";
+			}
         }
         try{
 			$update_record->distlosscat        = $target_result->icpDetails_v1Result->myPricingHistory->myLossFactorCode->code;
