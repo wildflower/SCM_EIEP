@@ -24,6 +24,7 @@ $updateComponent = new icpComponent() ;
 		$updateComponent->CompensationFactor = $path->compensationFactor;
 		$updateComponent->Owner = $path->owner;
 		$updateComponent->NumberOfChannelRecords = $path->vNumberOfChannels;
+		$updateComponent->RemovalDate = $path->removalDate;
 return $updateComponent;
 }
 
@@ -110,15 +111,16 @@ function set_component_query($updateComponent,$dbh){
 global $Project;
 			
 $query = "INSERT INTO $Project->component
-			(icp,MeteringInstallationNumber,MeteringComponentSerialNumber,MeteringComponentType ,MeterType ,AMIFlag,MeteringInstallationCategory,CompensationFactor, Owner,NumberOfChannelRecords)
-			values (:icp,:MeteringInstallationNumber,:MeteringComponentSerialNumber,:MeteringComponentType,:MeterType,:AMIFlag,:MeteringInstallationCategory,:CompensationFactor,:Owner,:NumberOfChannelRecords) on duplicate key update 
+			(icp,MeteringInstallationNumber,MeteringComponentSerialNumber,MeteringComponentType ,MeterType ,AMIFlag,MeteringInstallationCategory,CompensationFactor, Owner,NumberOfChannelRecords,removalDate)
+			values (:icp,:MeteringInstallationNumber,:MeteringComponentSerialNumber,:MeteringComponentType,:MeterType,:AMIFlag,:MeteringInstallationCategory,:CompensationFactor,:Owner,:NumberOfChannelRecords,:removalDate) on duplicate key update 
 			MeteringComponentType=values(MeteringComponentType),
 			MeterType=values(MeterType),
 			AMIFlag=values(AMIFlag),
 			MeteringInstallationCategory=values(MeteringInstallationCategory),
 			CompensationFactor=values(CompensationFactor),
 			Owner=values(Owner),
-			NumberOfChannelRecords=values(NumberOfChannelRecords)";
+			NumberOfChannelRecords=values(NumberOfChannelRecords),
+			removalDate=values(removalDate)";
 			
 		$stmt = $dbh->prepare($query);	
 			$stmt->bindValue(':icp',$updateComponent->icp);
@@ -131,6 +133,7 @@ $query = "INSERT INTO $Project->component
 			$stmt->bindValue(':CompensationFactor',$updateComponent->CompensationFactor);
 			$stmt->bindValue(':Owner',$updateComponent->Owner);
 			$stmt->bindValue(':NumberOfChannelRecords',$updateComponent->NumberOfChannelRecords) ;
+			$stmt->bindValue(':removalDate',$updateComponent->RemovalDate) ;
 			
 		$stmt->execute();
 		

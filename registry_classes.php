@@ -171,6 +171,7 @@ public $MeteringComponentType;
  public $CompensationFactor;
  public $Owner;
  public $NumberOfChannelRecords;
+ public $RemovalDate;
 }
 
 class icpInstallation 

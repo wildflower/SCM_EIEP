@@ -59,7 +59,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $Project->project_table where update_timestamp < '2015-12-27 05:02:01' ";
+	$query = "select icp from $Project->project_table where ICP = '0001237013EL3F6' ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -85,7 +85,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     fwrite($errors, "Getting ICP : $target_icp->icpId ".date('Y-m-d')." \n");
     $target_result = $client->icpDetails_v1($target_icp);
     //print_r($target_result);
-  //  echo "Response:\n" . $client->__getLastResponse() . "\n";
+    echo "Response:\n" . $client->__getLastResponse() . "\n";
     //var_dump($target_result);
     //exit();
     //echo "here";
