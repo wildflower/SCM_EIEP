@@ -85,7 +85,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     fwrite($errors, "Getting ICP : $target_icp->icpId ".date('Y-m-d')." \n");
     $target_result = $client->icpDetails_v1($target_icp);
     //print_r($target_result);
-    echo "Response:\n" . $client->__getLastResponse() . "\n";
+   // echo "Response:\n" . $client->__getLastResponse() . "\n";
     //var_dump($target_result);
     //exit();
     //echo "here";
