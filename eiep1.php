@@ -167,7 +167,7 @@ $time = $end_time - $start_time;
 echo "$filecount files Done, inserted $count records in ", date("h:i:s",$time), " \n";
 
 fwrite ($processing_status, "$filecount files Done, inserted $count records in $time seconds \n");
-$timing_string =  "$filecount files Done, inserted $count records in $time seconds ". date("h:i:s",$start_time)." ".date("h:i:s",$end_time) ."\n"
+$timing_string =  "$filecount files Done, inserted $count records in $time seconds ". date("h:i:s",$start_time)." ".date("h:i:s",$end_time) ."\n";
 fwrite ($timings,$timing_string);
 
 fclose($errors);
