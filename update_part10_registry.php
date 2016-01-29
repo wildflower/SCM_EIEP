@@ -59,7 +59,7 @@ if ($dataset == 'all') {
 } elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
 }elseif ($dataset == 'specific'){
-	$query = "select icp from $Project->project_table where ICP = '0001237013EL3F6' ";
+	$query = "select icp from $Project->project_table where ICP in ('0001237013EL3F6','0000000000CE2F2') ";
 }else {
 
 echo "Parameter dataset is required : all, new, icpincident \n ";
@@ -180,6 +180,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 			}catch(Exception $e){
 				echo $e->getLine()." - can't find icpDetails_v1Result -> myPricingHistory->allPriceCategoryCodes->PriceCategoryCode \n";
 				echo "Response:\n" . $client->__getLastResponse() . "\n";
+				$update_record->distpricecat = null;
 			}
         }
         try{
@@ -187,6 +188,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 		}catch(Exception $e){
 			echo $e->getLine()." - can't find icpDetails_v1Result -> myPricingHistory->myLossFactorCode->code \n";
 			echo "Response:\n" . $client->__getLastResponse() . "\n";
+			$update_record->distlosscat = null;
 		}
         $update_record->chargeablecapacity = $target_result->icpDetails_v1Result->myPricingHistory->chargeableCapacity;
         $update_record->reference          = $target_result->icpDetails_v1Result->myPricingHistory->userRef;

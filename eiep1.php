@@ -6,7 +6,7 @@ include 'eiep_helper_functions.php';
 include 'settings.php';
 
 $start_time = time();
-$dbh = new PDO('mysql:host=127.0.0.1;dbname=scm', $user, $password);
+$dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
 $errors = fopen('eiep-errors.txt','a');
