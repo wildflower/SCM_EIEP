@@ -70,7 +70,7 @@ function get_project($recipient){
 			$table = 'buller_';
 			break;
 		default:
-			$table = 'sunrise_';
+			throw new Exception('Recipient cant be found.');
 	}
 return $table;
 }

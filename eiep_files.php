@@ -341,7 +341,11 @@ class EIEP1_HDR
 				break;	
 	
 		}
-	$this->project	= get_project($this->recipient);
+	try(
+		$this->project	= get_project($this->recipient);	
+	)catch(Exception $e){
+		$this->project	= get_project($this->sender);
+	}
     $this->project_files = $this->project."files";
 	$this->project_table = get_project_table($this);
 	
