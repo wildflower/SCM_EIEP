@@ -413,14 +413,15 @@ global $dbh;
 $FILE = new EIEP_Filename(strtoupper(basename($filename)));
 validateFilename($HDR,$FILE);
 echo "Store headers \n";
-$project_table = get_project($HDR->recipient)."files";
+
+$project_table = $HDR->project_files;
 
 echo "Line count value ".$HDR->lineCountIsValid." \n";
 
 var_dump($HDR);
-$stmt = $dbh->prepare("INSERT INTO $project_table (filetype, sender, onbehalfsender, recipient, reportRunDate,  reportRunTime, fileid, numberOfRecords,reportPeriodStart,     reportPeriodEnd,     reportMonth,   utilityType,  fileStatus,  filename, isfilenamevalid, islinecountvalid, eiepversion)VALUES ( :filetype,    :sender,    :onbehalfsender,    :recipient,    :reportRunDate,    :reportRunTime,    :fileid,    :numberOfDetailRecords,    :reportPeriodStartDate,    :reportPeriodEndDate,    :reportMonth,    :utilityType, :fileStatus, :filename, :isfilenamevalid, :islinecountvalid, :eiepversion)");
+$stmt = $dbh->prepare("INSERT INTO $project_table (filetype, sender, onbehalfsender, recipient, reportRunDate,  reportRunTime, fileid, numberOfRecords, reportPeriodStart, reportPeriodEnd, reportMonth, utilityType, fileStatus,  filename, isfilenamevalid, islinecountvalid, eiepversion) VALUES ( :filetype,    :sender,    :onbehalfsender,    :recipient,    :reportRunDate,    :reportRunTime,    :fileid,    :numberOfDetailRecords,    :reportPeriodStartDate,    :reportPeriodEndDate,    :reportMonth,    :utilityType, :fileStatus, :filename, :isfilenamevalid, :islinecountvalid, :eiepversion)");
 
-$stmt->bindValue(':filetype',$HDR->filetype);
+	$stmt->bindValue(':filetype',$HDR->filetype);
     $stmt->bindValue(':sender',$HDR->sender);
     $stmt->bindValue(':onbehalfsender',$HDR->onbehalfsender);
     $stmt->bindValue(':recipient',$HDR->recipient);
