@@ -26,14 +26,9 @@ if(isset($_GET['project'])){
 }
 $Project = new ftl_project($project);
 
-
-
 echo "Working with $Project->project_table \n";
 
-$errors = fopen('registry_updates.txt', 'a');
-
 $count = 0;
- 
 
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
@@ -450,6 +445,7 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 $end_time = time();
 $time     = $end_time - $start_time;
 echo "$count ICPs updated  in $time seconds \n";
+fwrite($errors,"$count ICPs updated  in $time seconds  ". date("h:i:s",$start_time)." ".date("h:i:s",$end_time) ." ".date('Y-m-d')." \n");
 
 function parms($string, $data)
 {

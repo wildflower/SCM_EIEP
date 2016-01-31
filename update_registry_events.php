@@ -17,10 +17,7 @@ if(isset($_GET['project'])){
 }
 
 $Project = new ftl_project($project);
-
 echo "Working with $Project->project_name \n";
-
-$errors = fopen('registry_updates.txt','a');
 
 $options = array(
     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'

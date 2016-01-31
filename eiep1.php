@@ -9,11 +9,6 @@ $start_time = time();
 $dbh = new PDO($dsn, $user, $password, $options);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
 
-$errors = fopen('eiep-errors.txt','a');
-$processing_status = fopen('eiep-status.txt','a');
-$timings = fopen('eiep-timings.txt','a');
-$hdrfiles = fopen('hdrfiles.txt','a');
-
 $eiep1 = new VALIDATE_EIEP1_DET();       	
 $eiep3 = new VALIDATE_EIEP3_DET();       	
 $list = new VALIDATE_LIST_DET();       	
