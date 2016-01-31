@@ -39,6 +39,7 @@ if ($dataset == 'all'){
 	$query = "select icp from $Project->project_table";
 }elseif ($dataset == 'new'){
 	$query = "select icp from $Project->project_table where icpcreationdate is null";
+	$query = "select icp from buller_registry where icp not in (select distinct icp from registry_events)";
 }elseif ($dataset == 'specific'){
 	$query = "select icp from $Project->project_table where icp in ('0001941560ALFC6')" ;
 }else{
@@ -147,5 +148,5 @@ $dbh = null;
 $end_time = time();
 $time = $end_time - $start_time;
 echo "$icp_count ICPs updated with $event_count events in $time seconds \n\n";
-fwrite($errors,"$icp_count ICPs updated with $event_count events in $time seconds ".date('Y-m-d')." \n");
+fwrite($errors,"$icp_count ICPs updated with $event_count events in $time seconds ". date("h:i:s",$start_time)." ".date("h:i:s",$end_time) ." ".date('Y-m-d')." \n");
 ?>
